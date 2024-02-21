@@ -1,11 +1,3 @@
-import React from 'react'
+import React from 'react';
 
-const api_endpoints = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default api_endpoints
+export const api_endpoints = "";
