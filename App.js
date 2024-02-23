@@ -1,16 +1,20 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import LoginScreen from './src/screens/login/Login'
-import Introduction from './src/screens/introduction/Introduction'
-import Forgetpw from './src/screens/forgotpw/Forgetpw'
-import Forgotpwsuccessful from './src/screens/forgotpw/Forgotpwsuccessful'
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+import MainNavigate from './src/navigation/MainNavigate'
+import RegisterSuccess from './src/screens/register/RegisterSuccess';
+import { NavigationContainer } from '@react-navigation/native';
+
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
-    // <LoginScreen/>
-    // <Introduction/>
-    // <Forgetpw/>
-    <Forgotpwsuccessful/>
-
+    <QueryClientProvider client={queryClient}>
+      <MainNavigate />
+    </QueryClientProvider>
   )
 }
 

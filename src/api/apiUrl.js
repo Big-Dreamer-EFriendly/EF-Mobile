@@ -1,11 +1,1 @@
-import React from 'react'
-
-const api_endpoints = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default api_endpoints
+export const api_endpoints = 'https://ea61-2001-ee0-293-455a-6d17-a47b-8f4b-969f.ngrok-free.app';
