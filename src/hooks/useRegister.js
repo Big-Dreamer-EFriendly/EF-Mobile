@@ -11,10 +11,11 @@ const useRegister = ({ navigation }) => {
         `${api_endpoints}/auth/signup`,
         data
       );
-
       if (res.status === 201) {
-          navigation.navigate('RegisterSuccess') 
-        
+        navigation.navigate('RegisterSuccess') 
+      }
+      else if (res.status === 400) {
+        Alert.alert('Email already taken!');
       } else {
         Alert.alert('Invalid information!');
       }

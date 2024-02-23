@@ -32,7 +32,7 @@ const Register = ({ navigation }) => {
         email: '',
         password: '',
         address: '',
-        member: 0,
+        member: '',
       }}
       validationSchema={Signup_Schema}
       onSubmit={(values) => {
