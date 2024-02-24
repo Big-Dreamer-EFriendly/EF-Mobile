@@ -12,7 +12,6 @@ import { Formik } from "formik";
 import useForgotPassword from "../../hooks/useForgotPassword";
 const Forgetpw = ({ navigation }) => {
   const { handleForgotPassword, isLoading, isError } = useForgotPassword();
-
   const initialValues = { email: "" };
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,26 +23,37 @@ const Forgetpw = ({ navigation }) => {
     <View style={styles.container}>
       <Image source={require("../../assets/lock.png")} style={styles.lock} />
       <Text style={styles.name}>Forget password</Text>
-      <Text style={styles.description}>Provide your account email to{'\n'} reset your password</Text>
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity onPress={toggleShowPassword} style={styles.eyeIconContainer}>
-          <Image
-            source={showPassword ? require("../../assets/Show.png") : require("../../assets/close-eye.png")}
-            style={styles.eyeIcon}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.separator} />
-      <TouchableOpacity style={styles.nextButton}>
-        <Text style={styles.nextButtonText}>Next</Text>
-      </TouchableOpacity>
+      <Text style={styles.description}>
+        Provide your account email to {'\n'} reset your password
+      </Text>
+
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) => {
+          handleForgotPassword(values.email);
+        }}
+      >
+        {({ handleChange, handleSubmit, values }) => (
+          <>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                onChangeText={handleChange("email")}
+                value={values.email}
+              />
+            </View>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              style={styles.nextButton}
+              onPress={handleSubmit}
+              disabled={isLoading}
+            >
+              <Text style={styles.nextButtonText}>Next</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
     </View>
   );
 };

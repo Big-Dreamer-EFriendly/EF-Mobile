@@ -1,26 +1,38 @@
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useForgotPassword = () => {
-  const mutation = useMutation((data) => {
-    return axios.post(`${api_endpoints}/api/forgot-password`, data,{ validateStatus: status => true } );
+const useForgotPassword = (navigation) => {
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      try {
+        const res = await axios.post(`${api_endpoints}/api/forgot-password`, data, { validateStatus: status => true });
+        console.log(res);
+        if (res.status === 200) {
+        //   const user = JSON.stringify({ token });
+        //   await AsyncStorage.setItem('user', user);
+          Alert.alert('Success', 'OK', [
+            { text: 'OK', onPress: () => navigation.navigate('Home') },
+          ]);
+        } else if (res.status === 401) {
+          Alert.alert('Error', 'Invalid email or password. Please try again.');
+        } else {
+          Alert.alert('Error', 'An unexpected error occurred');
+        }
+      } catch (error) {
+        console.log(error);
+        Alert.alert('Error', 'An error occurred while logging in. Please try again.');
+      }
+    },
   });
 
-  const handleForgotPassword = async (data) => {
-    try {
-      await mutation.mutateAsync(data);
-      console.log('Password reset email sent successfully');
-    } catch (error) {
-      console.error('Failed to send password reset email:', error.message);
-    }
+  const handleForgotPassword = (data) => {
+    mutation.mutate(data);
   };
 
-  return {
-    handleForgotPassword,
-    isLoading: mutation.isLoading,
-    isError: mutation.isError,
-  };
+  return { handleForgotPassword };
 };
 
 export default useForgotPassword;
