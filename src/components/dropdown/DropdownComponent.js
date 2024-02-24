@@ -100,7 +100,7 @@ export default DropdownComponent;
 const styles = StyleSheet.create({
   dropdown: {
     height: 55,
-    width: 335,
+    width: 320,
     borderRadius:17,
     paddingHorizontal: 15,
     backgroundColor: 'rgba(217, 217, 217, 0.25)'
@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
+    color: '#999999'
   },
   selectedTextStyle: {
     fontSize: 16,

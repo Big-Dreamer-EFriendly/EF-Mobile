@@ -156,7 +156,7 @@ const Register = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  registercContaine: {
+  registercContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 55,
-    width: 335,
+    width: 320,
     paddingVertical: 0,
     paddingHorizontal: 15,
     marginBottom: 10,

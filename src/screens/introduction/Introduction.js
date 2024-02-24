@@ -1,27 +1,35 @@
-import React, { useState } from "react";
-import { Alert } from "react-native";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import React from "react";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { width, height } = Dimensions.get('window');
 
 const Introduction = ({ navigation }) => {
 
+  // const handleGetStart = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('user');
+  //     const value = jsonValue != null ? JSON.parse(jsonValue) : null;
+  //     if (value !== null) {
+  //       navigation.navigate('Register');
+  //     } else {
+  //       navigation.navigate('Login');
+  //     }
+  //   } catch (error) {
+  //     console.log('lỗi', error);
+  //   }
+  // };
   return (
     <View style={styles.container}>
-        <Image source={require("../../assets/appname.png")} style={styles.appname} />
-        <Text style={styles.name}>Welcome</Text>
-        <Image source={require("../../assets/introduction-img.png")} style={styles.introduction} />
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Sign In</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.signupButton}>
-          <Text style={styles.signupButtonText}>Sign Up</Text>
-        </TouchableOpacity>
+      <Image source={require("../../assets/appname.png")} style={styles.appname} />
+      <Text style={styles.name}>Welcome</Text>
+      <Image source={require("../../assets/introduction-img.png")} style={styles.introduction} />
+      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginButtonText} >Sign In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('Register')} >
+        <Text style={styles.signupButtonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -31,78 +39,50 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
   },
   appname: {
-    position: "absolute",
-    top: 80, // Adjust this value to align it vertically
-    width: 280, // Adjust this value as needed
-    height: 70, // Adjust this value as needed
+    width: width * 0.7,
+    height: height * 0.09,
   },
   introduction: {
-    position: "absolute",
-    top: 230, // Adjust this value to align it vertically
-    width: 360, // Adjust this value as needed
-    height: 300, // Adjust this value as needed
-  },
-  content: {
-    width: 320,
-    height: 300,
-    marginTop: -950,
-    position: "relative",
+    marginTop: height * 0.02,
+    width: width * 0.9,
+    height: height * 0.4,
   },
   name: {
-    top: 160, // Adjust this value to align it vertically
-    fontSize: 40,
+    fontSize: width * 0.1,
     fontWeight: "bold",
     color: "rgba(255, 138, 30, 1)",
   },
   loginButton: {
     backgroundColor: "rgba(255, 138, 30, 1)",
-    padding: 10,
-    borderRadius: 15,
+    padding: width * 0.03,
+    borderRadius: width * 0.05,
     alignItems: "center",
-    marginTop: 10,
-    top: 510, // Adjust this value to align it vertically
-    width: 180,
-    height: 50,
-    marginLeft: 5
+    marginTop: height * 0.03,
+    width: width * 0.4,
+    height: height * 0.07,
   },
   loginButtonText: {
     color: "white",
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: "bold",
   },
   signupButton: {
     backgroundColor: "rgba(15, 48, 73, 1)",
-    padding: 10,
-    borderRadius: 15,
+    padding: width * 0.03,
+    borderRadius: width * 0.05,
     alignItems: "center",
-    marginTop: 10,
-    top: 520, // Adjust this value to align it vertically
-    width: 180,
-    height: 50,
-    marginLeft: 5
+    marginTop: height * 0.02,
+    width: width * 0.4,
+    height: height * 0.07,
   },
   signupButtonText: {
     color: "white",
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: "bold",
   },
-  buttonContainer: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    height: 50,
-  },
-  
-  buttonText: {
-    color: "black",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
 });
 
-export default  Introduction;
+export default Introduction;

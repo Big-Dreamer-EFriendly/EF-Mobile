@@ -1,5 +1,4 @@
-// Formik x React Native example
-import React, {useRef} from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,18 +10,21 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Dimensions
 } from 'react-native';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import { Signup_Schema } from '../register/Validation';
 import useLogin from '../../hooks/useLogin';
 
-const Login = ({navigation}) => {
-  const passwordRef = useRef();
-  const {handleLogin} = useLogin({navigation});
+const { width, height } = Dimensions.get('window');
 
+const Login = ({ navigation }) => {
+  const passwordRef = useRef();
+  const { handleLogin } = useLogin({ navigation });
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <Formik
-      initialValues={{email: '', password: ''}}
+      initialValues={{ email: '', password: '' }}
       validationSchema={Signup_Schema}
       onSubmit={values => {
         console.log(values);
@@ -34,32 +36,19 @@ const Login = ({navigation}) => {
           handleLogin(account);
         }, 100);
       }}>
-      {({errors, touched, handleChange, handleBlur, values, handleSubmit}) => (
+      {({ errors, touched, handleChange, handleBlur, values, handleSubmit }) => (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.container}>
-          {/* <Image
-            style={styles.backgroundImage}
-            source={require('../assets/images/headerImage.jpg')}
-          /> */}
+          <Image source={require("../../assets/logo.png")} style={styles.logo} />
+          <Text style={styles.name}>Welcome !</Text>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.contentLogin}>
-              <View style={styles.itemLogo}>
-                {/* <Image
-                  source={require('../assets/images/logo-bonsai-cay-canh-28-1030x1030-removebg-preview.png')}
-                  style={styles.logo}
-                /> */}
-                <Text style={styles.textLogo}>BonSai Application</Text>
-              </View>
-              <View>
-                <Text style={styles.textWelcome}>Welcome Back</Text>
-                <Text style={styles.textLogin}>Log in to your account</Text>
-              </View>
               <View style={styles.textInput}>
                 <TextInput
                   style={styles.input}
                   placeholder="Enter Email"
-                  placeholderTextColor={'black'}
+                  placeholderTextColor={'rgba(15, 48, 73, 0.7)'}
                   enterKeyHint={'next'}
                   onSubmitEditing={() => passwordRef.current?.focus()}
                   onChangeText={handleChange('email')}
@@ -69,35 +58,50 @@ const Login = ({navigation}) => {
                 {errors.email && touched.email ? (
                   <Text style={styles.errorText}>* {errors.email}</Text>
                 ) : null}
-                <TextInput
-                  ref={passwordRef}
-                  style={styles.input}
-                  placeholder="Enter Password"
-                  placeholderTextColor={'black'}
-                  enterKeyHint={'done'}
-                  onSubmitEditing={() => passwordRef.current?.clear()}
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                />
-                {errors.password && touched.password ? (
-                  <Text style={styles.errorText}>* {errors.password}</Text>
-                ) : null}
+
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    ref={passwordRef}
+                    style={styles.passwordInput}
+                    placeholder="Enter Password"
+                    placeholderTextColor={'rgba(15, 48, 73, 0.7)'}
+                    enterKeyHint={'done'}
+                    onSubmitEditing={() => passwordRef.current?.clear()}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                    secureTextEntry={!showPassword}
+                  />
+                  {errors.password && touched.password ? (
+                    <Text style={styles.errorText}>* {errors.password}</Text>
+                  ) : null}
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIconContainer}>
+                    <Image source={require("../../assets/Show.png")} style={styles.eyeIcon} />
+                  </TouchableOpacity>
+                </View>
               </View>
-              <Text style={styles.forgetPass}>Forgot Password?</Text>
               <TouchableOpacity
-                style={styles.buttonLogin}
+                style={styles.loginButton}
                 onPress={handleSubmit}>
-                <Text style={styles.textLgoin}>Log In</Text>
+                <Text style={styles.loginButtonText}> Sign In</Text>
               </TouchableOpacity>
-              <View style={styles.signupNav}>
-                <Text style={styles.textAccount}>Don't have an account?</Text>
-                <Text
-                  style={styles.textSignup}
-                  onPress={() => navigation.navigate('Register')}>
-                  Signup
-                </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+              </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.facebookButton}>
+                  <Image source={require("../../assets/fb.png")} style={styles.icon} />
+                  <Text style={styles.buttonText}>Facebook</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.googleButton}>
+                  <Image style={styles.icon} source={require("../../assets/google.png")} />
+                  <Text style={styles.buttonText}>Google</Text>
+                </TouchableOpacity>
               </View>
+
+              <Text style={styles.dontHaveAccount}>Don't have an account? 
+              <Text style={styles.signInText} onPress={() => navigation.navigate('Register')}>Sign Up</Text>
+              </Text>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -108,97 +112,148 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-  },
-  itemLogo: {
-    alignItems: 'center',
-    marginTop: -30,
-  },
-  textLogo: {
-    color: '#98C13F',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: -30,
-  },
-  textWelcome: {
-    color: '#000',
-    fontSize: 34,
-    fontWeight: 'bold',
-  },
-  textLogin: {
-    color: '#000',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  contentLogin: {
-    paddingHorizontal: 38,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 15,
-    // marginTop: 10,
-    borderBottomWidth: 1.221,
-    borderBottomColor: '#063',
-    color: '#000',
-    paddingLeft: 15,
-  },
-  textInput: {
-    gap: 10,
-    marginTop: 20,
-  },
-  forgetPass: {
-    marginTop: 5,
-    color: '#0D986A',
-    fontSize: 14,
-  },
-  buttonLogin: {
-    backgroundColor: '#0D986A',
-    height: 55,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
-    borderRadius: 15,
-    marginHorizontal: 30,
   },
-  textLgoin: {
-    color: '#FFF',
-    fontSize: 20,
-    fontWeight: '500',
+  logo: {
+    width: width * 0.6, 
+    height: height * 0.16,  
   },
-  signupNav: {
+  name: {
+    fontSize: width * 0.08,  
+    fontWeight: 'bold',
+    color: 'rgba(255, 138, 30, 1)',
+    marginBottom: height * 0.02
+  },
+  contentLogin: {
+    width: width * 0.8,  
+    marginTop: height * 0.02,  
+  },
+  textInput: {
+    marginBottom: height * 0.02,  
+  },
+  input: {
+    color: 'black',
+    height: height * 0.075,  
+    paddingLeft: width * 0.04,  
+    backgroundColor: 'white',
+    borderRadius: width * 0.045,  
+    marginBottom: height * 0.03, 
+    borderColor: "#DCDCDC",
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+          width: 0,
+          height: 2,
+    },
+    shadowOpacity: 1, 
+    shadowRadius: 4, 
+    elevation: 5,
+  },
+  passwordContainer: {
     flexDirection: 'row',
-    textAlign: 'center',
-    paddingLeft: 50,
-    marginTop: 5,
+    alignItems: 'center',
+    height: height * 0.075,  
+    backgroundColor: 'white',
+    borderRadius: width * 0.045,  
+    marginBottom: height * 0.02,  
+    color: 'black',
+    paddingLeft: width * 0.04,  
+    backgroundColor: 'white',
+    marginBottom: height * 0.02, 
+    borderColor: "#DCDCDC",
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+          width: 0,
+          height: 2,
+    },
+    shadowOpacity: 1, 
+    shadowRadius: 4, 
+    elevation: 5,
   },
-  textAccount: {
-    color: '#000',
-    fontSize: 14,
-  },
-  textSignup: {
-    color: '#0D986A',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  backgroundImage: {
+  passwordInput: {
     flex: 1,
-    resizeMode: 'cover',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '80%',
-    borderBottomLeftRadius: 150,
-    borderBottomRightRadius: 150,
+    color: 'black',
   },
-  errorText: {
+  eyeIconContainer: {
+    padding: width * 0.02,  
+  },
+  eyeIcon: {
+    width: width * 0.05,  
+    height: width * 0.05,  
+  },
+  loginButton: {
+    backgroundColor: 'rgba(255, 138, 30, 1)',
+    padding: width * 0.03,  
+    borderRadius: width * 0.04,  
+    alignItems: 'center',
+    marginBottom: height * 0.02,  
+    marginHorizontal: width * 0.2
+  },
+  loginButtonText: {
+    color: 'white',
+    fontSize: width * 0.05,  
     fontWeight: 'bold',
-    color: 'red',
-    margin: 0,
-    padding: 0,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginBottom: height * 0.02,  
+  },
+  facebookButton: {
+    backgroundColor: 'white',
+    padding: width * 0.03,  
+    borderRadius: width * 0.04,  
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    marginRight: width * 0.06,  
+    height: height * 0.06, 
+    borderColor: "#DCDCDC",
+    borderWidth: width * 0.002
+ 
+    
+  },
+  googleButton: {
+    backgroundColor: 'white',
+    padding: width * 0.03,  
+    borderRadius: width * 0.04,  
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    height: height * 0.06,  
+    borderWidth: width * 0.002,
+    borderColor: "#DCDCDC"
+
+  },
+  icon: {
+    width: width * 0.1,
+    height: height * 0.05
+  },
+
+  buttonText: {
+    color: '#0F3049',
+    fontSize: width * 0.04,  
+    fontWeight: 'bold',
+    marginLeft: width * 0.01
+  },
+  forgotPassword: {
+    color: 'rgba(15, 48, 73, 0.7)',
+    alignSelf: 'center',
+    fontSize: width * 0.04,  
+    marginBottom: height * 0.04,  
+  },
+  dontHaveAccount: {
+    color: 'rgba(15, 48, 73, 0.7)',
+    fontSize: width * 0.04,  
+    alignSelf: 'center',
+  },
+  signInText: {
+    color: '#0F3049',
+    fontWeight: 'bold',
   },
 });
+
 
 export default Login;

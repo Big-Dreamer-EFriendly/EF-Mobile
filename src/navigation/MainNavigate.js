@@ -12,6 +12,9 @@ import AddRoom from '../screens/rooms/AddRoom'
 import ShowRoom from '../screens/rooms/ShowRoom'
 import AllTips from '../screens/tips/AllTips'
 import RegisterSuccess from '../screens/register/RegisterSuccess';
+import Forgetpw from '../screens/forgotpw/Forgetpw';
+import Forgotpwsuccessful from '../screens/forgotpw/Forgotpwsuccessful';
+import Introduction from '../screens/introduction/Introduction';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -20,6 +23,10 @@ const MainNavigate = () => {
         <NavigationContainer>
             <QueryClientProvider client={queryClient}>
                 <Stack.Navigator>
+                    <Stack.Screen 
+                    name="Introduction"
+                    component={Introduction}
+                    options={{headerShown: false}} />
                     <Stack.Screen 
                     name="Register"
                     component={Register}
@@ -51,6 +58,14 @@ const MainNavigate = () => {
                     <Stack.Screen 
                     name="RegisterSuccess"
                     component={RegisterSuccess}
+                    options={{headerShown: false}} />
+                    <Stack.Screen 
+                    name="ForgotPassword"
+                    component={Forgetpw}
+                    options={{headerShown: false}} />
+                    <Stack.Screen 
+                    name="ForgotPasswordSuccess"
+                    component={Forgotpwsuccessful}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>

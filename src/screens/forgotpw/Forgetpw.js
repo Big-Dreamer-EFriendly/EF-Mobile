@@ -8,9 +8,12 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-
+import { Formik } from "formik";
+import useForgotPassword from "../../hooks/useForgotPassword";
 const Forgetpw = ({ navigation }) => {
-  const [password, setPassword] = useState('');
+  const { handleForgotPassword, isLoading, isError } = useForgotPassword();
+
+  const initialValues = { email: "" };
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleShowPassword = () => {
