@@ -4,17 +4,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useLogin = (navigation) => {
+const useForgotPassword = (navigation) => {
   const mutation = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await axios.post(`${api_endpoints}/auth/login`, data, { validateStatus: status => true });
+        const res = await axios.post(`${api_endpoints}/api/forgot-password`, data, { validateStatus: status => true });
         console.log(res);
         if (res.status === 200) {
-          const token = res.data.data;
-          const user = JSON.stringify({ token });
-          await AsyncStorage.setItem('user', user);
-          Alert.alert('Success', 'Login successfully', [
+        //   const user = JSON.stringify({ token });
+        //   await AsyncStorage.setItem('user', user);
+          Alert.alert('Success', 'OK', [
             { text: 'OK', onPress: () => navigation.navigate('Home') },
           ]);
         } else if (res.status === 401) {
@@ -29,11 +28,11 @@ const useLogin = (navigation) => {
     },
   });
 
-  const handleLogin = (data) => {
+  const handleForgotPassword = (data) => {
     mutation.mutate(data);
   };
 
-  return { handleLogin };
+  return { handleForgotPassword };
 };
 
-export default useLogin;
+export default useForgotPassword;
