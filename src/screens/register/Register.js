@@ -52,7 +52,7 @@ const Register = ({ navigation }) => {
       {({ errors, touched, handleChange, handleBlur, values, handleSubmit }) => (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.container}
+          style={styles.registercContainer}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View>
@@ -156,7 +156,7 @@ const Register = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  registercContaine: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -189,7 +189,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 16,
     backgroundColor: 'rgba(217, 217, 217, 0.25)',
-    borderRadius: 17
+    borderRadius: 17,
+    color: 'black'
   },
   errorText: {
     color: 'red',

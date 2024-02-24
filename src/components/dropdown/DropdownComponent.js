@@ -80,6 +80,7 @@ const DropdownComponent = ({ onProvinceChange }) => {
       selectedTextStyle={styles.selectedTextStyle}
       inputSearchStyle={styles.inputSearchStyle}
       iconStyle={styles.iconStyle}
+      itemTextStyle = {styles.itemTextStyle}
       data={provincesList}
       search
       maxHeight={300}
@@ -123,4 +124,7 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
   },
+  itemTextStyle: {
+    color:'black'
+  }
 });
