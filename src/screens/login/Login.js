@@ -13,7 +13,7 @@ import {
   Dimensions
 } from 'react-native';
 import { Formik } from 'formik';
-import { Signup_Schema } from '../register/Validation';
+import { Login_Schema } from './Validation';
 import useLogin from '../../hooks/useLogin';
 
 const { width, height } = Dimensions.get('window');
@@ -25,7 +25,7 @@ const Login = ({ navigation }) => {
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
-      validationSchema={Signup_Schema}
+      validationSchema={Login_Schema}
       onSubmit={values => {
         console.log(values);
         setTimeout(() => {
@@ -72,13 +72,14 @@ const Login = ({ navigation }) => {
                     value={values.password}
                     secureTextEntry={!showPassword}
                   />
-                  {errors.password && touched.password ? (
-                    <Text style={styles.errorText}>* {errors.password}</Text>
-                  ) : null}
                   <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIconContainer}>
                     <Image source={require("../../assets/Show.png")} style={styles.eyeIcon} />
                   </TouchableOpacity>
+                  
                 </View>
+                {errors.password && touched.password ? (
+                    <Text style={styles.errorText}>* {errors.password}</Text>
+                  ) : null}
               </View>
               <TouchableOpacity
                 style={styles.loginButton}
@@ -100,7 +101,7 @@ const Login = ({ navigation }) => {
               </View>
 
               <Text style={styles.dontHaveAccount}>Don't have an account? 
-              <Text style={styles.signInText} onPress={() => navigation.navigate('Register')}>Sign Up</Text>
+              <Text style={styles.signInText} onPress={() => navigation.navigate('Register')}> Sign Up</Text>
               </Text>
             </View>
           </TouchableWithoutFeedback>
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     paddingLeft: width * 0.04,  
     backgroundColor: 'white',
     borderRadius: width * 0.045,  
-    marginBottom: height * 0.03, 
+    marginBottom: height * 0.01, 
     borderColor: "#DCDCDC",
     backgroundColor: "white",
     shadowColor: "#000",
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
     color: 'black',
     paddingLeft: width * 0.04,  
     backgroundColor: 'white',
-    marginBottom: height * 0.02, 
+    marginBottom: height * 0.01, 
     borderColor: "#DCDCDC",
     backgroundColor: "white",
     shadowColor: "#000",
@@ -251,7 +252,12 @@ const styles = StyleSheet.create({
   },
   signInText: {
     color: '#0F3049',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
+
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: height * 0.02,
   },
 });
 

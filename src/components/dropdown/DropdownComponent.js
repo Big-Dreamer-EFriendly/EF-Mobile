@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
 const provincesList = [
@@ -90,7 +90,9 @@ const DropdownComponent = ({ onProvinceChange }) => {
       searchPlaceholder="Search..."
       value={value}
       onChange={handleChange}
-     
+      renderLeftIcon={() => (
+        <Image source={require("../../assets/home.png")} style={styles.icon} />
+      )}
     />
   );
 };
@@ -107,10 +109,12 @@ const styles = StyleSheet.create({
    
   },
   icon: {
+    width: 20,
+    height: 20,
     marginRight: 5,
   },
   placeholderStyle: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#999999'
   },
   selectedTextStyle: {
