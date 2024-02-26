@@ -131,7 +131,7 @@ const Register = ({ navigation }) => {
                   placeholderTextColor={'#999999'}
                   keyboardType="numeric"
                   enterKeyHint={'done'}
-                  onSubmitEditing={handleSubmit}
+                  onSubmitEditing={() => inputRef.current?.focus()}
                   onChangeText={handleChange('member')}
                   onBlur={handleBlur('member')}
                   value={values.member.toString()}
