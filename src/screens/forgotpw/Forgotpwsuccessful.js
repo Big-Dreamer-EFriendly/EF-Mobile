@@ -16,7 +16,7 @@ const Forgotpwsuccessful = ({ navigation }) => {
       <Text style={styles.name}>Password Updated</Text>
       <Image source={require("../../assets/iconsuccessful.png")} style={styles.icon} />
       <Text style={styles.description}>Your new password has been sent{'\n'} to your email</Text>
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
     </View>

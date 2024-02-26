@@ -1,60 +1,56 @@
 import React, { useState } from "react";
-import { Alert } from "react-native";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { KeyboardAvoidingView, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Platform, Dimensions} from "react-native";
 import { Formik } from "formik";
 import useForgotPassword from "../../hooks/useForgotPassword";
-const Forgetpw = ({ navigation }) => {
-  const { handleForgotPassword, isLoading, isError } = useForgotPassword();
-  const initialValues = { email: "" };
-  const [showPassword, setShowPassword] = useState(false);
+import * as Yup from "yup"; 
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+const ForgotPassword_Schema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+});
+
+const { width, height } = Dimensions.get('window');
+
+const Forgetpw = ({ navigation }) => {
+
+  const { handleForgotPassword, isLoading, isError } = useForgotPassword({navigation});
 
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/lock.png")} style={styles.lock} />
-      <Text style={styles.name}>Forget password</Text>
-      <Text style={styles.description}>
-        Provide your account email to {'\n'} reset your password
-      </Text>
-
-      <Formik
-        initialValues={initialValues}
-        onSubmit={(values) => {
-          handleForgotPassword(values.email);
-        }}
-      >
-        {({ handleChange, handleSubmit, values }) => (
-          <>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                onChangeText={handleChange("email")}
-                value={values.email}
-              />
-            </View>
-            <View style={styles.separator} />
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={handleSubmit}
-              disabled={isLoading}
-            >
-              <Text style={styles.nextButtonText}>Next</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </Formik>
-    </View>
+    <Formik
+      initialValues={{ email: '' }}
+      validationSchema={ForgotPassword_Schema}
+      onSubmit={values => {
+        setTimeout(() => {
+          let email = {
+            email: values.email
+          };
+          handleForgotPassword(email);
+        }, 100);
+      }}
+    >
+      {({ handleChange, handleSubmit, values }) => (
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+          <Image source={require("../../assets/lock.png")} style={styles.lock} />
+          <Text style={styles.name}>Forget password</Text>
+          <Text style={styles.description}>
+            Provide your account email to {'\n'} reset your password
+          </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor={'#999999'}
+              onChangeText={handleChange("email")}
+              value={values.email}
+            />
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={handleSubmit}
+            disabled={isLoading}
+          >
+            <Text style={styles.nextButtonText}>Reset Password</Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      )}
+    </Formik>
   );
 };
 
@@ -63,71 +59,69 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
   },
   lock: {
-    position: "absolute",
-    top: 130,
-    width: 230,
-    height: 150,
+    width: width * 0.5, 
+    height: height * 0.12, 
   },
   name: {
-    top: 260,
-    fontSize: 35,
+    fontSize: width * 0.08,
     fontWeight: "bold",
     color: "rgba(255, 138, 30, 1)",
     textAlign: "center",
+    marginTop: height * 0.05, 
   },
   description: {
-    top: 260,
-    fontSize: 18,
+    fontSize: width * 0.04,
     textAlign: "center",
     color: "rgba(15, 48, 73, 1)",
+    marginTop: height * 0.02, 
+    marginBottom: height * 0.04
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   input: {
-    flex: 1,
-    width: 300,
-    height: 40,
-    paddingHorizontal: 30,
-    top: 290
-  },
-  eyeIconContainer: {
-    padding: 10,
-    top: 290,
-    paddingHorizontal: 30,
-  },
-  eyeIcon: {
-    width: 20,
-    height: 20,
+    color: 'black',
+    height: height * 0.075,  
+    width: width * 0.8,
+    paddingLeft: width * 0.04,  
+    backgroundColor: 'white',
+    borderRadius: width * 0.045,  
+    marginBottom: height * 0.01, 
+    borderColor: "#DCDCDC",
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+          width: 0,
+          height: 2,
+    },
+    shadowOpacity: 1, 
+    shadowRadius: 4, 
+    elevation: 5,
   },
   separator: {
-    width: 330,
+    width: width * 0.9, 
     borderBottomWidth: 1,
     borderBottomColor: "rgba(15, 48, 73, 1)",
-    marginVertical: 10,
-    top: 280,
+    marginVertical: height * 0.01, 
   },
   nextButton: {
     backgroundColor: "rgba(255, 138, 30, 1)",
-    padding: 13 ,
-    borderRadius: 15,
+    padding: 13,
+    borderRadius: width * 0.045,
     alignItems: "center",
-    marginTop: 310,
-    width: 160,
-    height: 55,
-    marginLeft: 5,
+    marginTop: height * 0.04, 
+    width: width * 0.5, 
   },
   nextButtonText: {
     color: "white",
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: "bold",
-    textAlign:"center",
-    alignItems: 'center',
+    textAlign: "center",
   },
 });
-
 export default Forgetpw;

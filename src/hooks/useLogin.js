@@ -4,12 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useLogin = (navigation) => {
+const useLogin = ({navigation}) => {
   const mutation = useMutation({
     mutationFn: async (data) => {
       try {
+        console.log(data);
         const res = await axios.post(`${api_endpoints}/auth/login`, data, { validateStatus: status => true });
-        console.log(res);
+        // console.log(res);
         if (res.status === 200) {
           const token = res.data.data;
           const user = JSON.stringify({ token });

@@ -4,22 +4,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useForgotPassword = (navigation) => {
+const useForgotPassword = ({navigation}) => {
   const mutation = useMutation({
     mutationFn: async (data) => {
+      console.log(data);
       try {
         const res = await axios.post(`${api_endpoints}/api/forgot-password`, data, { validateStatus: status => true });
-        console.log(res);
         if (res.status === 200) {
         //   const user = JSON.stringify({ token });
         //   await AsyncStorage.setItem('user', user);
-          Alert.alert('Success', 'OK', [
-            { text: 'OK', onPress: () => navigation.navigate('Home') },
-          ]);
+        navigation.navigate('ForgotPasswordSuccess') 
+          // Alert.alert('Success', 'OK', [
+          //   { text: 'OK', onPress: () => navigation.navigate('Home') },
+          // ]);
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Invalid email or password. Please try again.');
-        } else {
-          Alert.alert('Error', 'An unexpected error occurred');
+          Alert.alert('Error', 'Invalid email! Please try again.');
+        } else if (res.status === 400) {
+          Alert.alert('Error', 'You can only request a new password once per hour.');
         }
       } catch (error) {
         console.log(error);

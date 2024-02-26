@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Keyboard,
+  ScrollView
 } from 'react-native';
 import { Formik } from 'formik';
 import { Signup_Schema } from './Validation';
@@ -59,16 +60,12 @@ const Register = ({ navigation }) => {
               <View style={styles.viewLogo}>
                 <Text style={styles.title}>Create new account</Text>
               </View>
+              <ScrollView contentContainerStyle={styles.scrollContainer}>
               <View style={styles.textInput}>
                 <Text style={styles.label}>Full Name</Text>
 
                 <View style={styles.inputContainer}>
-                  {/* <Icon
-                    name='user'
-                    size={30}
-                    color='#999999'
-                    style={styles.icon}
-                  /> */}
+                  <Image source={require("../../assets/user.png")} style={styles.icon} />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter Your Name"
@@ -85,6 +82,8 @@ const Register = ({ navigation }) => {
                 ) : null}
 
                 <Text style={styles.label}>Email</Text>
+                <View style={styles.inputContainer}>
+                <Image source={require("../../assets/email.png")} style={styles.icon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter Your Email"
@@ -95,11 +94,14 @@ const Register = ({ navigation }) => {
                   onBlur={handleBlur('email')}
                   value={values.email}
                 />
+                </View>
                 {errors.email && touched.email ? (
                   <Text style={styles.errorText}>* {errors.email}</Text>
                 ) : null}
 
                 <Text style={styles.label}>Password</Text>
+                <View style={styles.inputContainer}>
+                <Image source={require("../../assets/password.png")} style={styles.icon} />
                 <TextInput
                   ref={inputRef}
                   style={styles.input}
@@ -112,6 +114,7 @@ const Register = ({ navigation }) => {
                   onBlur={handleBlur('password')}
                   value={values.password}
                 />
+                </View>
                 {errors.password && touched.password ? (
                   <Text style={styles.errorText}>* {errors.password}</Text>
                 ) : null}
@@ -120,17 +123,20 @@ const Register = ({ navigation }) => {
                 <DropdownComponent onProvinceChange={handleProvinceChange}/>
 
                 <Text style={styles.label}>Family Members</Text>
+                <View style={styles.inputContainer}>
+                <Image source={require("../../assets/member.png")} style={styles.icon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Enter Number of Family Members"
                   placeholderTextColor={'#999999'}
                   keyboardType="numeric"
                   enterKeyHint={'done'}
-                  onSubmitEditing={handleSubmit}
+                  onSubmitEditing={() => inputRef.current?.focus()}
                   onChangeText={handleChange('member')}
                   onBlur={handleBlur('member')}
                   value={values.member.toString()}
                 />
+                </View>
                 {errors.member && touched.member ? (
                   <Text style={styles.errorText}>* {errors.member}</Text>
                 ) : null}
@@ -147,6 +153,7 @@ const Register = ({ navigation }) => {
                 </View>
                 
               </View>
+              </ScrollView>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -163,6 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   viewLogo: {
+    marginTop: 35,
     marginBottom: 20,
     alignItems: 'center',
   },
@@ -182,14 +190,8 @@ const styles = StyleSheet.create({
     color: '#0F3049',
   },
   input: {
-    height: 55,
-    width: 320,
-    paddingVertical: 0,
-    paddingHorizontal: 15,
-    marginBottom: 10,
+  
     fontSize: 16,
-    backgroundColor: 'rgba(217, 217, 217, 0.25)',
-    borderRadius: 17,
     color: 'black'
   },
   errorText: {
@@ -225,7 +227,23 @@ const styles = StyleSheet.create({
   },
   transforContainer: {
     flexDirection: 'row'
-  }
+  },
+  inputContainer: {
+    height: 55,
+    width: 320,
+    paddingVertical: 0,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    backgroundColor: 'rgba(217, 217, 217, 0.25)',
+    borderRadius: 17,
+    color: 'black',
+    flexDirection: 'row',
+    alignItems: 'center'
+   },
+   icon: {
+    width: 20,
+    height: 20
+   }
 });
 
 export default Register;
