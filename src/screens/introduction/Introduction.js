@@ -1,24 +1,27 @@
 import React from "react";
+import { useEffect } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
 const Introduction = ({ navigation }) => {
+  useEffect(() => {
+    checkUser();
+  }, []);
 
-  // const handleGetStart = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem('user');
-  //     const value = jsonValue != null ? JSON.parse(jsonValue) : null;
-  //     if (value !== null) {
-  //       navigation.navigate('Register');
-  //     } else {
-  //       navigation.navigate('Login');
-  //     }
-  //   } catch (error) {
-  //     console.log('lỗi', error);
-  //   }
-  // };
+  const checkUser = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('user');
+      
+      if (userToken) {
+        navigation.navigate('BottomTabs');
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    }
+  };
+ 
   return (
     <View style={styles.container}>
       <Image source={require("../../assets/appname.png")} style={styles.appname} />
