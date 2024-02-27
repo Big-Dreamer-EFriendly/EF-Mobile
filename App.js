@@ -13,10 +13,11 @@ const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    // <QueryClientProvider client={queryClient}>
-    //   <MainNavigate />
-    // </QueryClientProvider>
-    <AddRoom/>
+    <QueryClientProvider client={queryClient}>
+      {/* <AddRoom/> */}
+      <MainNavigate/>
+    </QueryClientProvider>
+    
   )
 }
 

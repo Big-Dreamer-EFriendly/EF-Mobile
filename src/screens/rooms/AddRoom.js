@@ -1,62 +1,70 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { Formik } from 'formik';
+import useAddroom from '../../hooks/useAddroom';
+import InputWithIcon from '../../components/inputWithIcon/InputWithIcon';
+import * as Yup from 'yup';
 
-const InputWithIcon = ({ icon, placeholder, value, onChangeText, keyboardType }) => {
-  return (
-    <View style={styles.inputContainer}>
-      <Image source={icon} style={styles.inputIcon} />
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        placeholderTextColor="#aaaaaa"
-        value={value}
-        onChangeText={onChangeText}
-        underlineColorAndroid="transparent"
-        keyboardType={keyboardType} // Thêm keyboardType ở đây
-      />
-    </View>
-  );
-};
+const { width, height } = Dimensions.get('window');
 
-const AddRoom = () => {
-  const [roomName, setRoomName] = useState('');
-  const [floor, setFloor] = useState('');
+const AddRoom = ({ navigation }) => {
+  const { handleAddRoom } = useAddroom({ navigation });
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Room Name is required'),
+    floor: Yup.number().required('Floor is required').positive('Floor must be positive'),
+  });
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
-        <Text style={styles.title}>Add new room</Text>
-        <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
-      </View>
+      <Formik
+        initialValues={{
+          name: '',
+          floor: '',
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values) => {
+          handleAddRoom(values);
+        }}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <View>
+            <View style={styles.header}>
+              <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
+              <Text style={styles.title}>Add new room</Text>
+              <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
+            </View>
+            
+            <InputWithIcon
+              icon={require('../../assets/iconroom.png')}
+              placeholder="Room Name"
+              value={values.name}
+              onChangeText={handleChange('name')}
+              onBlur={handleBlur('name')}
+              keyboardType="default"
+            />
+            {touched.name && errors.name && (
+              <Text style={styles.errorText}>{errors.name}</Text>
+            )}
 
-      <View style={{ marginTop: 40 }}>
-        <View style={styles.inputLabelContainer}>
-          <Text style={styles.inputLabel}>Name</Text>
-        </View>
-        <InputWithIcon
-          icon={require('../../assets/iconroom.png')}
-          placeholder="Room Name"
-          value={roomName}
-          onChangeText={setRoomName}
-          keyboardType="default" // Đặt keyboardType thành "default" cho ô input tên phòng
-        />
+            <InputWithIcon
+              icon={require('../../assets/iconfloor.png')}
+              placeholder="Floor"
+              value={values.floor}
+              onChangeText={handleChange('floor')}
+              onBlur={handleBlur('floor')}
+              keyboardType="numeric"
+            />
+            {touched.floor && errors.floor && (
+              <Text style={styles.errorText}>{errors.floor}</Text>
+            )}
 
-        <View style={styles.inputLabelContainer}>
-          <Text style={styles.inputLabel}>Floor</Text>
-        </View>
-        <InputWithIcon
-          icon={require('../../assets/iconfloor.png')}
-          placeholder="Floor"
-          value={floor}
-          onChangeText={setFloor}
-          keyboardType="numeric" // Đặt keyboardType thành "numeric" cho ô input tầng
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Save</Text>
-      </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </Formik>
     </View>
   );
 };
@@ -65,64 +73,48 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-    padding: 20,
+    padding: width * 0.06,
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: height * 0.02,
+    marginBottom: height * 0.05,
   },
   title: {
-    fontSize: 24,
-    color: 'black',
+    fontSize: width * 0.055,
+    color: '#0F3049',
+    fontWeight: '700',
+  },
+  iconback: {
+    width: width * 0.02,
+    height: height * 0.02,
   },
   icon: {
-    width: 34,
-    height: 34,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f2f2f2', // Màu xám
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    width: 354,
-    height: 55,
-  },
-  inputIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    height: 50,
-    color: 'black',
-    borderWidth: 0, // Loại bỏ viền
+    width: width * 0.055,
+    height: height * 0.03,
   },
   button: {
     backgroundColor: 'orange',
-    width: 154,
-    height: 50,
-    borderRadius: 20,
+    width: width * 0.35,
+    height: height * 0.07,
+    borderRadius: width * 0.05,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 30,
-    marginLeft: 100,
+    marginLeft: width * 0.25,
+    marginTop: height * 0.01
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: width * 0.05,
+    fontWeight: '700'
   },
-  inputLabelContainer: {
-    marginBottom: 10,
-  },
-  inputLabel: {
-    fontSize: 16,
-    color: 'black',
-    marginLeft: 10,
+  errorText: {
+    color: 'red',
+    marginLeft: width * 0.03,
+    marginBottom: height * 0.01
   },
 });
 
