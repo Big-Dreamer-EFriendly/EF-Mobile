@@ -13,7 +13,7 @@ const useAddroom = ({navigation}) => {
         const userToken = JSON.parse(userTokenObject)?.token || '';
         console.log(userToken);
         console.log(data);
-        const res = await axios.post(`${api_endpoints}/api/create-room`, data, 
+        const res = await axios.post(`${api_endpoints}/rooms`, data, 
         {
             headers: {
               Authorization: `Bearer ${userToken}`,
