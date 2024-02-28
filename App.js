@@ -7,7 +7,6 @@ import {
 import MainNavigate from './src/navigation/MainNavigate'
 import RegisterSuccess from './src/screens/register/RegisterSuccess';
 import { NavigationContainer } from '@react-navigation/native';
-import AddRoom from './src/screens/rooms/AddRoom';
 
 const queryClient = new QueryClient();
 
