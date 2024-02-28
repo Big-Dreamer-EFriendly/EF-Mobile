@@ -3,7 +3,6 @@ import { StyleSheet, Dimensions, View, Animated, TouchableOpacity, Text} from 'r
 import { CurvedBottomBar } from 'react-native-curved-bottom-bar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import AddRoom from '../screens/rooms/AddRoom';
 import Home from '../screens/home/Home';
 import Profile from '../screens/profile/Profile';
 import ShowRoom from '../screens/rooms/ShowRoom';
@@ -62,6 +61,9 @@ const BottomTabs = () => {
       height={height * 0.08}
       circleWidth={width * 0.1}
       bgColor="white"
+      screenOptions={
+        {headerShown: false}
+      }
       initialRouteName="Home"
       borderTopLeftRight
       renderCircle={({ selectedTab, navigate }) => (
@@ -80,21 +82,25 @@ const BottomTabs = () => {
         name="Home"
         position="LEFT"
         component={Home}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBar.Screen
         name="All tips"
         position="LEFT"
         component={AllTips}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBar.Screen
         name="Rooms"
         component={ShowRoom}
         position="RIGHT"
+        options={{ headerShown: false }}
       />
       <CurvedBottomBar.Screen
         name="Profile"
         component={Profile}
         position="RIGHT"
+        options={{ headerShown: false }}
       />
     </CurvedBottomBar.Navigator>
   );
