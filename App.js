@@ -14,11 +14,11 @@ const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    // <QueryClientProvider client={queryClient}>
-    //   <MainNavigate />
-    // </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <MainNavigate />
+    </QueryClientProvider>
     // <AddDevices/>
-    <ShowRoom/>
+    // <ShowRoom/>
   )
 }
 
