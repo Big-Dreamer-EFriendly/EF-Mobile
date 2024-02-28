@@ -9,7 +9,7 @@ const useForgotPassword = ({navigation}) => {
     mutationFn: async (data) => {
       console.log(data);
       try {
-        const res = await axios.post(`${api_endpoints}/api/forgot-password`, data, { validateStatus: status => true });
+        const res = await axios.post(`${api_endpoints}/auth/forgot-password`, data, { validateStatus: status => true });
         if (res.status === 200) {
         //   const user = JSON.stringify({ token });
         //   await AsyncStorage.setItem('user', user);

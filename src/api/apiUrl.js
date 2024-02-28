@@ -1,1 +1,1 @@
-export const api_endpoints = 'https://32ec-113-176-99-140.ngrok-free.app';
+export const api_endpoints = 'https://95da-113-176-99-140.ngrok-free.app';
