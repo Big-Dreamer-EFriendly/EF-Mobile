@@ -15,6 +15,7 @@ import RegisterSuccess from '../screens/register/RegisterSuccess';
 import Forgetpw from '../screens/forgotpw/Forgetpw';
 import Forgotpwsuccessful from '../screens/forgotpw/Forgotpwsuccessful';
 import Introduction from '../screens/introduction/Introduction';
+import BottomTabs from './BottomTabs';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -66,6 +67,10 @@ const MainNavigate = () => {
                     <Stack.Screen 
                     name="ForgotPasswordSuccess"
                     component={Forgotpwsuccessful}
+                    options={{headerShown: false}} />
+                    <Stack.Screen 
+                    name="BottomTabs"
+                    component={BottomTabs}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>
