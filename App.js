@@ -10,6 +10,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import AddRoom from './src/screens/rooms/AddRoom';
 import EditRoom from './src/screens/rooms/EditRoom';
 import DetailRoom from './src/screens/rooms/DetailRoom';
+import Register from './src/screens/register/Register';
+import Home from './src/screens/home/Home';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +21,9 @@ const App = () => {
       {/* <AddRoom/> */}
       {/* <MainNavigate/> */}
       {/* <EditRoom/> */}
-      <DetailRoom/>
+      {/* <DetailRoom/> */}
+      {/* <Register/> */}
+      <Home/>
     </QueryClientProvider>
     
     

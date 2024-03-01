@@ -253,10 +253,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
-
-
-
-
     hourContainer: {
         marginTop: 10,
         flexDirection: 'row',
