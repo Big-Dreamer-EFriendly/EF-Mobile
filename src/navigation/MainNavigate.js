@@ -19,6 +19,7 @@ import Introduction from '../screens/introduction/Introduction';
 import BottomTabs from './BottomTabs';
 import InforDetailDevice from '../screens/devices/InforDetailDevice';
 import EditRoom from '../screens/rooms/EditRoom';
+import DetailRoom from '../screens/rooms/DetailRoom';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -87,7 +88,10 @@ const MainNavigate = () => {
                     name="EditRoom"
                     component={EditRoom}
                     options={{headerShown: false}} />
-                    
+                     <Stack.Screen 
+                    name="DetailRoom"
+                    component={DetailRoom}
+                    options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>
         </NavigationContainer>

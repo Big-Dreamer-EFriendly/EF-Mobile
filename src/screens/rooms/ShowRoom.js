@@ -16,7 +16,7 @@ const ShowRoom = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.button}>
-      <TouchableOpacity onPress={() => console.log(`Pressed on ${item.name}`)}>
+      <TouchableOpacity onPress={() => navigation.navigate('DetailRoom')}>
         <Text style={styles.roomText}>{item.name}</Text>
 
         <View style={styles.column}>
