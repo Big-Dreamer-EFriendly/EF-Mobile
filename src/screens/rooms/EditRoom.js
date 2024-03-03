@@ -9,11 +9,11 @@ const { width, height } = Dimensions.get('window');
 
 const EditRoom = ({ route, navigation }) => {
   const { roomId, name,floor, numberOfDevices } = route.params; 
-  const { handleEditRoom } = useEditRoom({navigation}); 
+  const { handleEditRoom } = useEditRoom({ navigation });
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Room Name is required'),
-    floor: Yup.number().required('Floor is required').positive('Floor must be positive'),
+    floor: Yup.number().required('Floor is required'),
   });
 
   return (
@@ -24,10 +24,15 @@ const EditRoom = ({ route, navigation }) => {
           floor: floor,
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
+        onSubmit={values => {
             console.log(values);
-          handleEditRoom(roomId, values); 
-        }}
+            setTimeout(() => {
+              let room = {
+                name: values.name,
+                floor: values.floor,
+              };
+              handleEditRoom(roomId, room);
+            }, 100);}}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View>
