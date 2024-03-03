@@ -46,7 +46,6 @@ const AddDevices = ({navigation}) => {
   };
   
   
-  
     
     if (isDevicesLoading || isCategoriesLoading) {
     return (

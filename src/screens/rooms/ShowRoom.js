@@ -27,7 +27,7 @@ const ShowRoom = ({ navigation }) => {
           <Text style={styles.valueText}>0 VND</Text>
         </View>
         <Text style={styles.labelText}>Floor: {item.floor}</Text>
-        <Text style={styles.labelText}>{item.numberOfDevices} devices</Text>
+        <Text style={styles.numberDevice}>{item.numberOfDevices} devices</Text>
 
       </TouchableOpacity>
       <View style={styles.toggleContainer}>
@@ -45,7 +45,7 @@ const ShowRoom = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
         <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
       </TouchableOpacity>        
       <Text style={styles.title}>Your rooms</Text>
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     column: {
       flex: 1,
       flexDirection: 'row' ,
-      marginBottom: height * 0.02,
+      marginBottom: height * 0.015,
       justifyContent: 'space-between'
     },
     labelText: {
@@ -190,6 +190,13 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
+    numberDevice: {
+      color: '#42CFB6',
+      fontWeight: '600',
+      marginTop: height * 0.015,
+      marginBottom: height * 0.01,
+      fontSize: width * 0.04
+    }
 });
 
 export default ShowRoom;
