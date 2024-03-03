@@ -70,7 +70,7 @@ const BottomTabs = () => {
         <Animated.View style={styles.btnCircleUp}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigate('Add room')}
+            onPress={() => navigate('Add device')}
           >
             <Icon name={'plus-circle'} color="#fff" size={50} />
           </TouchableOpacity>
