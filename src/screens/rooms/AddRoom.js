@@ -30,11 +30,13 @@ const AddRoom = ({ navigation }) => {
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View>
             <View style={styles.header}>
-              <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
+              <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
+              </TouchableOpacity>
               <Text style={styles.title}>Add new room</Text>
               <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
             </View>
-            
+
             <InputWithIcon
               icon={require('../../assets/iconroom.png')}
               placeholder="Room Name"
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
     height: height * 0.03,
   },
   button: {
-    backgroundColor: 'orange',
+    backgroundColor: '#FF8A1E',
     width: width * 0.35,
     height: height * 0.07,
     borderRadius: width * 0.05,

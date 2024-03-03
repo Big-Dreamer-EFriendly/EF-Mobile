@@ -1,72 +1,138 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Dimensions } from 'react-native';
-// import CircleSlider from 'react-native-circle-slider';
+import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Icon } from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View, Text, FlatList, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Dimensions,ActivityIndicator } from 'react-native';
+import useGetAllDevices from '../../hooks/useGetAllDevices';
+import useGetCategories from '../../hooks/useGetCategories';
+
 const { width, height } = Dimensions.get('window');
 
-const AddDevices = () => {
-  const [numberOfDevices, setNumberOfDevices] = useState(0);
-  const [value, setValue] = useState(0);
-  const [values, setValues] = useState(0);
+const AddDevices = ({navigation}) => {
+  const { data: devicesData, isLoading: isDevicesLoading } = useGetAllDevices();
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useGetCategories();
+  const [searchText, setSearchText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [filteredDevices, setFilteredDevices] = useState([]);
 
-  const handleChange = (newValue) => {
-    console.log(`Changed value ${newValue}`);
-    setValue(newValue);
-  };
-  const decreaseDevices = () => {
-    if (numberOfDevices > 1) {
-      setNumberOfDevices(numberOfDevices - 1);
+  useEffect(() => {
+    if (devicesData) {
+      let filtered = devicesData.filter(device => device.name.toLowerCase().includes(searchText.toLowerCase()));
+
+      if (selectedCategory) {
+        filtered = filtered.filter(device => device.categoryId === selectedCategory._id);
+      }
+
+      setFilteredDevices(filtered);
+    }
+  }, [devicesData, searchText, selectedCategory]);
+
+  const handleCategoryPress = (category) => {
+    if (selectedCategory && selectedCategory._id === category._id) {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(category);
     }
   };
 
-  const increaseDevices = () => {
-    setNumberOfDevices(numberOfDevices + 1);
+  const saveDeviceToStorage = async (device) => {
+    try {
+      const deviceDataString = JSON.stringify(device);
+      await AsyncStorage.setItem('selectedDevice', deviceDataString);
+      console.log(deviceDataString);
+      console.log('Selected device data saved to AsyncStorage');
+    } catch (error) {
+      console.error('Error saving selected device data to AsyncStorage:', error);
+    }
   };
-
-  const handleChanges = (newValue) => {
-    console.log(`Changed value ${newValue}`);
-    setValue(newValue);
-  };
-
-
+  
+  
+  
+    
+    if (isDevicesLoading || isCategoriesLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
-        <Text style={styles.title}>Add new room</Text>
-        <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
+       <View style={styles.header}>
+          <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
+          <Text style={styles.title}>Add new device</Text>
+          <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
+        </View>
+        <View style={styles.containerCategories}>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholderTextColor={'#D9D9D9'}
+            placeholder="Search by name..."
+            onChangeText={(text) => setSearchText(text)}
+            value={searchText}
+          />
+        </View>
+        <View style={styles.sortContainer}>
+        <Text style={styles.sort}>Categories :</Text>
+        <ScrollView
+          style={styles.scrollView}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {categoriesData && categoriesData.map((category) => (
+            <TouchableOpacity
+              key={category._id.toString()}
+              onPress={() => handleCategoryPress(category)}
+            >
+              <View
+                style={[
+                  styles.categoryContainer,
+                  selectedCategory && selectedCategory._id === category._id
+                    ? styles.selectedCategory
+                    : null,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.categoryName,
+                    selectedCategory && selectedCategory._id === category._id
+                      ? styles.selectedCategoryText
+                      : null,
+                  ]}
+                >
+                  {category.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        </View>
+        
       </View>
-      <Text style={styles.subtitle}>Number of air-conditioners</Text>
 
-      <View style={styles.deviceControlContainer}>
-        <TouchableOpacity style={[styles.deviceControlButton, styles.decreaseButton]} onPress={decreaseDevices}>
-          <Text style={styles.deviceControlButtonText}>-</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={[styles.deviceCountInput, styles.countSquare]}
-          value={numberOfDevices.toString()}
-          keyboardType="numeric"
-          editable={false}
+      <View style={styles.containerDevice}>
+        <FlatList
+          data={filteredDevices}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                saveDeviceToStorage(item);
+                navigation.navigate('InforDetailDevice', {
+                  deviceId: item._id
+                });
+              }}
+            >
+            <View style={styles.card}>
+              <Image style={styles.imageDevice} source={require('../../assets/DeviceExample.png')}/>
+              <Text style={styles.textName}>{item.name}</Text>
+              <Text style={styles.text}>Power: {item.powerConsumption}</Text>
+            </View>
+            </TouchableOpacity>
+          )}
         />
-        <TouchableOpacity style={[styles.deviceControlButton, styles.increaseButton]} onPress={increaseDevices}>
-          <Text style={styles.deviceControlButtonText}>+</Text>
-        </TouchableOpacity>
       </View>
-      <Text style={styles.subtemperature}>The temperature you usually use</Text>
-
-      {/* <CircleSlider
-        value={values}
-        onValueChange={handleChanges}
-        strokeWidth={8}
-        dialWidth={10}
-        gap={2}
-        btnRadius={12}
-        meterColor="#C0CCDA"
-        textColor="#6B7C93"
-      /> */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Save</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -74,91 +140,117 @@ const AddDevices = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    padding: 20,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  containerCategories: {
+    backgroundColor: '#fff',
+    marginTop: height * 0.01,
+  },
+  containerDevice: {
+    flex: 1,
+    marginTop: height * 0.02,
+    backgroundColor: '#fff',
+    paddingTop: height * 0.01,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchInput: {
+    height: height * 0.06,
+    borderColor: '#9C9C9C',
+    borderWidth: 1,
+    borderRadius: width * 0.02,
+    marginBottom: height * 0.02,
+    padding: width * 0.04,
+    color: 'black'
+  },
+  scrollView: {
+    height: height * 0.05,
+    
+  },
+  categoryContainer: {
+    flex: 1,
+    margin: width * 0.01,
+    padding: width * 0.015,
+    backgroundColor: '#e3e3e3',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryName: {
+    fontSize: width * 0.035,
+    color: 'black',
+  },
+  selectedCategory: {
+    backgroundColor: '#FF8A1E',
+  },
+  selectedCategoryText: {
+    color: 'white',
+  },
+  text: {
+    color: 'black',
+  },
+  textName: {
+    color: 'black',
+    fontWeight: '600'
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: height * 0.02,
+    marginBottom: height * 0.03,
   },
   title: {
-    fontSize: 24,
-    color: 'black',
+    fontSize: width * 0.055,
+    color: '#0F3049',
+    fontWeight: '700',
   },
-  subtitle: {
-    fontSize: 24,
-    color: 'black',
-    marginLeft: 30,
-    marginTop: height * 0.04,
-  },
-  subtemperature: {
-    fontSize: 24,
-    color: 'black',
-    marginTop: height * 0.04,
-    marginLeft: width * 0.0004,
+  iconback: {
+    width: width * 0.02,
+    height: height * 0.02,
   },
   icon: {
-    width: 34,
-    height: 34,
+    width: width * 0.055,
+    height: height * 0.03,
   },
-  button: {
-    backgroundColor: 'orange',
-    width: 154,
-    height: 50,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: height * 0.03,
-    marginLeft: width * 0.25,
+  sortContainer: {
+    justifyContent: 'center'
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+  sort: {
+    color:'black',
+    padding: height * 0.01,
+    borderRadius: width * 0.01,
+    fontWeight: '700'
   },
-  deviceControlContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: height * 0.02,
-    marginLeft: width * 0.2,
-  },
-  deviceControlButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2, // Increase border thickness
-    borderColor: 'orange',
-  },
-  decreaseButton: {
-    marginRight: width * 0.01,
-  },
-  increaseButton: {
-    marginLeft: 10,
-  },
-  deviceControlButtonText: {
-    fontSize: 24,
-    color: 'orange',
-  },
-  deviceCountInput: {
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#f2f2f2',
-    textAlign: 'center',
-    marginHorizontal: 10,
-    fontSize: 18,
+  card: {
     color: 'black',
+    paddingLeft: width * 0.04,
+    paddingVertical: height * 0.01,
+    backgroundColor: 'white',
+    marginHorizontal: width * 0.01,
+    marginTop: height * 0.01,
+    borderRadius: width * 0.045,  
+    marginBottom: height * 0.01, 
+    borderColor: "#DCDCDC",
+    backgroundColor: "white",
+    shadowColor: "#42CFB6",
+    shadowOffset: {
+          width: 0,
+          height: 2,
+    },
+    shadowOpacity: 1, 
+    shadowRadius: 4, 
+    elevation: 3,
   },
-  countSquare: {
-    width: 80,
-    height: 80,
-    borderWidth: 2,
-    borderRadius: 10,
-  },
+  imageDevice:{
+    height: height * 0.07,
+    marginHorizontal: width * 0.2,
+    marginBottom: height * 0.02
+  }
 });
 
 export default AddDevices;
-
-

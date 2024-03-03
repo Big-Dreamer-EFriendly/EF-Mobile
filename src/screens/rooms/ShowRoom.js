@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView, ActivityIndicator} from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import useGetRoom from '../../hooks/useGetRoom';
 
@@ -18,7 +18,17 @@ const ShowRoom = ({ navigation }) => {
     <View style={styles.button}>
       <TouchableOpacity onPress={() => console.log(`Pressed on ${item.name}`)}>
         <Text style={styles.roomText}>{item.name}</Text>
-        <Text style={styles.subText}>Floor: {item.floor}</Text>
+        <View style={styles.column}>
+        <Text style={styles.labelText}>Monthly Electric Consumption</Text>
+        <Text style={styles.valueText}>0 KWh</Text>
+        </View>
+        <View style={styles.column}>
+          <Text style={styles.labelText}>Monthly Bill Consumption</Text>
+          <Text style={styles.valueText}>0 VND</Text>
+        </View>
+        <Text style={styles.labelText}>Floor: {item.floor}</Text>
+        <Text style={styles.labelText}>{item.numberOfDevices} devices</Text>
+
       </TouchableOpacity>
       <View style={styles.toggleContainer}>
         <ToggleSwitch
@@ -35,12 +45,16 @@ const ShowRoom = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
-        <Text style={styles.title}>Your rooms</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
+      </TouchableOpacity>        
+      <Text style={styles.title}>Your rooms</Text>
         <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
       </View>
       {isFetching ? (
-        <Text>Loading...</Text>
+        <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
       ) : data ? (
         <FlatList
           style = {styles.flatList}
@@ -50,7 +64,7 @@ const ShowRoom = ({ navigation }) => {
          
         />
       ) : (
-        <Text>No data available</Text>
+        <Text style={styles.title}>No data available</Text>
       )}
        <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
           <Icon name={'plus-circle'} color="#42CFB6" size={40} />
@@ -116,7 +130,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
         marginRight: 'auto',
-        marginBottom: height * 0.1
+        marginBottom: height * 0.02
     },
     toggleButton: {
         backgroundColor: '#dcdcdc',
@@ -143,32 +157,8 @@ const styles = StyleSheet.create({
     subText: {
         fontSize:width * 0.03,
         color: 'black',
-        marginTop: height * 0.02,
-        marginBottom: height * 0.007,
     },
-    zeroWhText: {
-        fontSize: 22,
-        color: 'orange',
-        left: 260,
-        marginBottom: height * 0.005,
-        marginTop: height * 0.02,
-        fontWeight: 'bold'
-    },
-
-    moneysubText: {
-        fontSize: 18,
-        color: 'black',
-        marginTop: height * 0.1,
-        right: width * 0.15,
-
-    },
-    moneyWhText: {
-        fontSize: 22,
-        color: 'rgba(15, 48, 73, 1)',
-        marginRight: width * 0.01,
-        marginTop: height * 0.1,
-        fontWeight: 'bold'
-    },
+  
     buttonPlus: {
         position:'absolute',
         justifyContent: 'center',
@@ -177,7 +167,29 @@ const styles = StyleSheet.create({
     },
     plus:{
         fontSize: width * 0.06
-    }
+    },
+    column: {
+      flex: 1,
+      flexDirection: 'row' ,
+      marginBottom: height * 0.02,
+      justifyContent: 'space-between'
+    },
+    labelText: {
+      fontSize: width * 0.04,
+      color: 'black',
+      marginRight: width * 0.15
+
+    },
+    valueText: {
+      fontSize: width * 0.04,
+      color: '#FA812E',
+      fontWeight: '500'
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
 });
 
 export default ShowRoom;

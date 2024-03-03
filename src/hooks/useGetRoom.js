@@ -16,12 +16,12 @@ export default function useGetRoom() {
         },
         validateStatus: status => true,
       });
-      console.log(response.data);
+      console.log(userToken);
       return response.data;
     },
   });
 
   return {
-    data,
+    data, isFetching
   };
 }

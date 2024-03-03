@@ -10,12 +10,14 @@ import Register from '../screens/register/Register'
 import Profile from '../screens/profile/Profile'
 import AddRoom from '../screens/rooms/AddRoom'
 import ShowRoom from '../screens/rooms/ShowRoom'
+import AddDevices from '../screens/devices/AddDevices';
 import AllTips from '../screens/tips/AllTips'
 import RegisterSuccess from '../screens/register/RegisterSuccess';
 import Forgetpw from '../screens/forgotpw/Forgetpw';
 import Forgotpwsuccessful from '../screens/forgotpw/Forgotpwsuccessful';
 import Introduction from '../screens/introduction/Introduction';
 import BottomTabs from './BottomTabs';
+import InforDetailDevice from '../screens/devices/InforDetailDevice';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -72,6 +74,15 @@ const MainNavigate = () => {
                     name="BottomTabs"
                     component={BottomTabs}
                     options={{headerShown: false}} />
+                    <Stack.Screen 
+                    name="Add device"
+                    component={AddDevices}
+                    options={{headerShown: false}} />
+                    <Stack.Screen 
+                    name="InforDetailDevice"
+                    component={InforDetailDevice}
+                    options={{headerShown: false}} />
+                    
                 </Stack.Navigator>
             </QueryClientProvider>
         </NavigationContainer>

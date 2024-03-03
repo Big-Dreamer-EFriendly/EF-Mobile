@@ -13,7 +13,6 @@ const Introduction = ({ navigation }) => {
   const checkUser = async () => {
     try {
       const userToken = await AsyncStorage.getItem('user');
-      
       if (userToken) {
         navigation.navigate('BottomTabs');
       }
