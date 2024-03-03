@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { Formik } from 'formik';
-import useEditRoom from '../../hooks/useEditRoom'; // Import your useEditRoom hook
+import useEditRoom from '../../hooks/useEditRoom';
 import InputWithIcon from '../../components/inputWithIcon/InputWithIcon';
 import * as Yup from 'yup';
 
 const { width, height } = Dimensions.get('window');
 
 const EditRoom = ({ route, navigation }) => {
-  const { roomId, name,floor } = route.params; // Assuming you pass roomId and initialData from navigation params
-  const { handleEditRoom } = useEditRoom({navigation}); // Import your useEditRoom hook
+  const { roomId, name,floor, numberOfDevices } = route.params; 
+  const { handleEditRoom } = useEditRoom({navigation}); 
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Room Name is required'),

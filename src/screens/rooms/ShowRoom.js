@@ -31,7 +31,7 @@ const ShowRoom = ({ navigation }) => {
         <Text style={styles.labelText}>Floor: {item.floor}</Text>
         <View style={styles.column}>
           <Text style={styles.numberDevice}>{item.numberOfDevices} devices</Text>
-          <TouchableOpacity style={styles.numberDevice} onPress={() => navigation.navigate('EditRoom', { roomId: item._id, name: item.name, floor: item.floor })}>
+          <TouchableOpacity style={styles.numberDevice} onPress={() => navigation.navigate('EditRoom', { roomId: item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices })}>
             <Icon name='square-edit-outline' color={'grey'} size={20}/>
           </TouchableOpacity>
         </View>
