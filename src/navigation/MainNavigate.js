@@ -18,6 +18,7 @@ import Forgotpwsuccessful from '../screens/forgotpw/Forgotpwsuccessful';
 import Introduction from '../screens/introduction/Introduction';
 import BottomTabs from './BottomTabs';
 import InforDetailDevice from '../screens/devices/InforDetailDevice';
+import EditRoom from '../screens/rooms/EditRoom';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -81,6 +82,10 @@ const MainNavigate = () => {
                     <Stack.Screen 
                     name="InforDetailDevice"
                     component={InforDetailDevice}
+                    options={{headerShown: false}} />
+                     <Stack.Screen 
+                    name="EditRoom"
+                    component={EditRoom}
                     options={{headerShown: false}} />
                     
                 </Stack.Navigator>

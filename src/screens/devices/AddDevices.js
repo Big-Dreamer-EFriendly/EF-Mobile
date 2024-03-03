@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Icon } from 'react-native-vector-icons/MaterialCommunityIcons';
-import { View, Text, FlatList, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Dimensions,ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import useGetAllDevices from '../../hooks/useGetAllDevices';
 import useGetCategories from '../../hooks/useGetCategories';
 
 const { width, height } = Dimensions.get('window');
 
-const AddDevices = ({navigation}) => {
+const AddDevices = ({ navigation }) => {
   const { data: devicesData, isLoading: isDevicesLoading } = useGetAllDevices();
   const { data: categoriesData, isLoading: isCategoriesLoading } = useGetCategories();
   const [searchText, setSearchText] = useState('');
@@ -44,10 +44,10 @@ const AddDevices = ({navigation}) => {
       console.error('Error saving selected device data to AsyncStorage:', error);
     }
   };
-  
-  
-    
-    if (isDevicesLoading || isCategoriesLoading) {
+
+
+
+  if (isDevicesLoading || isCategoriesLoading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -57,12 +57,14 @@ const AddDevices = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-       <View style={styles.header}>
-          <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
-          <Text style={styles.title}>Add new device</Text>
-          <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
-        </View>
-        <View style={styles.containerCategories}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
+          <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Add new device</Text>
+        <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
+      </View>
+      <View style={styles.containerCategories}>
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
@@ -73,41 +75,41 @@ const AddDevices = ({navigation}) => {
           />
         </View>
         <View style={styles.sortContainer}>
-        <Text style={styles.sort}>Categories :</Text>
-        <ScrollView
-          style={styles.scrollView}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
-          {categoriesData && categoriesData.map((category) => (
-            <TouchableOpacity
-              key={category._id.toString()}
-              onPress={() => handleCategoryPress(category)}
-            >
-              <View
-                style={[
-                  styles.categoryContainer,
-                  selectedCategory && selectedCategory._id === category._id
-                    ? styles.selectedCategory
-                    : null,
-                ]}
+          <Text style={styles.sort}>Categories :</Text>
+          <ScrollView
+            style={styles.scrollView}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {categoriesData && categoriesData.map((category) => (
+              <TouchableOpacity
+                key={category._id.toString()}
+                onPress={() => handleCategoryPress(category)}
               >
-                <Text
+                <View
                   style={[
-                    styles.categoryName,
+                    styles.categoryContainer,
                     selectedCategory && selectedCategory._id === category._id
-                      ? styles.selectedCategoryText
+                      ? styles.selectedCategory
                       : null,
                   ]}
                 >
-                  {category.name}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                  <Text
+                    style={[
+                      styles.categoryName,
+                      selectedCategory && selectedCategory._id === category._id
+                        ? styles.selectedCategoryText
+                        : null,
+                    ]}
+                  >
+                    {category.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
-        
+
       </View>
 
       <View style={styles.containerDevice}>
@@ -123,11 +125,11 @@ const AddDevices = ({navigation}) => {
                 });
               }}
             >
-            <View style={styles.card}>
-              <Image style={styles.imageDevice} source={require('../../assets/DeviceExample.png')}/>
-              <Text style={styles.textName}>{item.name}</Text>
-              <Text style={styles.text}>Power: {item.powerConsumption}</Text>
-            </View>
+              <View style={styles.card}>
+                <Image style={styles.imageDevice} source={require('../../assets/DeviceExample.png')} />
+                <Text style={styles.textName}>{item.name}</Text>
+                <Text style={styles.text}>Power: {item.powerConsumption}</Text>
+              </View>
             </TouchableOpacity>
           )}
         />
@@ -168,7 +170,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: height * 0.05,
-    
+
   },
   categoryContainer: {
     flex: 1,
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   sort: {
-    color:'black',
+    color: 'black',
     padding: height * 0.01,
     borderRadius: width * 0.01,
     fontWeight: '700'
@@ -232,20 +234,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginHorizontal: width * 0.01,
     marginTop: height * 0.01,
-    borderRadius: width * 0.045,  
-    marginBottom: height * 0.01, 
+    borderRadius: width * 0.045,
+    marginBottom: height * 0.01,
     borderColor: "#DCDCDC",
     backgroundColor: "white",
     shadowColor: "#42CFB6",
     shadowOffset: {
-          width: 0,
-          height: 2,
+      width: 0,
+      height: 2,
     },
-    shadowOpacity: 1, 
-    shadowRadius: 4, 
+    shadowOpacity: 1,
+    shadowRadius: 4,
     elevation: 3,
   },
-  imageDevice:{
+  imageDevice: {
     height: height * 0.07,
     marginHorizontal: width * 0.2,
     marginBottom: height * 0.02
