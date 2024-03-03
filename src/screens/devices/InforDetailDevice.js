@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
   FlatList,
+  ScrollView,
   ActivityIndicator
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -65,7 +66,7 @@ const InforDetailDevice = ({ navigation }) => {
             roomId: selectedRoomId,
             quantity: values.quantity,
             timeUsed: 0,
-            temperature: 0
+            temperature: values.temperature
           };
           handleAddDevice(device);
         }, 100);
@@ -84,6 +85,7 @@ const InforDetailDevice = ({ navigation }) => {
             <Text style={styles.title}>Add new device</Text>
             <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
           </View>
+          <ScrollView>
           <View style={styles.cardDevice}>
             <Image source={require("../../assets/DeviceExample.png")} style={styles.deviceImage} />
             <Text style={styles.deviceName}>{devicesData.name}</Text>
@@ -158,6 +160,7 @@ const InforDetailDevice = ({ navigation }) => {
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
+          </ScrollView>
         </View>
           )}
         </View>
