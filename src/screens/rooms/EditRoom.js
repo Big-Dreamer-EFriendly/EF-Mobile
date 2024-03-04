@@ -1,31 +1,38 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { Formik } from 'formik';
-import useAddroom from '../../hooks/useAddroom';
+import useEditRoom from '../../hooks/useEditRoom';
 import InputWithIcon from '../../components/inputWithIcon/InputWithIcon';
 import * as Yup from 'yup';
 
 const { width, height } = Dimensions.get('window');
 
-const AddRoom = ({ navigation }) => {
-  const { handleAddRoom } = useAddroom({ navigation });
+const EditRoom = ({ route, navigation }) => {
+  const { roomId, name,floor, numberOfDevices } = route.params; 
+  const { handleEditRoom } = useEditRoom({ navigation });
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Room Name is required'),
-    floor: Yup.number().required('Floor is required').positive('Floor must be positive'),
+    floor: Yup.number().required('Floor is required'),
   });
 
   return (
     <View style={styles.container}>
       <Formik
         initialValues={{
-          name: '',
-          floor: '',
+          name: name,
+          floor: floor,
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
-          handleAddRoom(values);
-        }}
+        onSubmit={values => {
+            console.log(values);
+            setTimeout(() => {
+              let room = {
+                name: values.name,
+                floor: values.floor,
+              };
+              handleEditRoom(roomId, room);
+            }, 100);}}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View>
@@ -33,7 +40,7 @@ const AddRoom = ({ navigation }) => {
               <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
                 <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
               </TouchableOpacity>
-              <Text style={styles.title}>Add new room</Text>
+              <Text style={styles.title}>Edit Room</Text>
               <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
             </View>
 
@@ -62,7 +69,7 @@ const AddRoom = ({ navigation }) => {
             )}
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Save</Text>
+              <Text style={styles.buttonText}>Update</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -70,6 +77,9 @@ const AddRoom = ({ navigation }) => {
     </View>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -120,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddRoom;
+export default EditRoom;
