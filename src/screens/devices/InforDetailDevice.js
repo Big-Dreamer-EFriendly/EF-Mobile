@@ -96,7 +96,7 @@ const InforDetailDevice = ({ navigation }) => {
             <FlatList
               horizontal
               showsHorizontalScrollIndicator={false}
-              data={rooms.data}
+              data={rooms && rooms.data}
               keyExtractor={(item) => item._id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
