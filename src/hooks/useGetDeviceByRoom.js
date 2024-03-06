@@ -17,6 +17,7 @@ export default function useGetDevicesByRoom(roomId) {
           },
           validateStatus: status => true,
         });
+        console.log(roomId);
         
         return response.data;
       } catch (error) {

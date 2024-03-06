@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { ECharts } from 'react-native-echarts-wrapper';
 import { Formik } from 'formik';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import useGetDevicesByRoom from '../../hooks/useGetDeviceByRoom';
 import useGetCategories from '../../hooks/useGetCategories';
@@ -106,20 +107,19 @@ const DetailRoom = ({ route, navigation }) => {
   const renderDeviceDetails = (category) => (
     <ScrollView>
       {category.devices.map((device) => (
-        <View key={device._id}>
-          <Text>{device.deviceData.name}</Text>
-          <Text>Quantity: {device.quantity}</Text>
+        <View key={device._id} style={styles.deviceCard}>
+          <Text style={styles.deviceName}>{device.deviceData.name}</Text>
+          <Text style={styles.deviceInfo}>Quantity: {device.quantity}</Text>
           {category.categoryName === 'Air-conditioner' && (
-            <Text>Commonly used temperature: {device.temperature}</Text>
+            <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
           )}
-          <TouchableOpacity onPress={() => handleEditDeviceA(device)}>
-            <Text>Edit</Text>
+          <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
+          <Icon name='square-edit-outline' color={'grey'} size={20}/>
           </TouchableOpacity>
         </View>
       ))}
     </ScrollView>
   );
-
   const renderScene = SceneMap({
     info: renderGeneralInfo,
     ...groupedDevices.reduce((accumulator, category, index) => {
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     height: height * 0.03,
   },
   loadingContainer: {
-    ...StyleSheet.absoluteFill,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -320,6 +320,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
+  },
+  deviceCard: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  deviceName: {
+    fontSize: width * 0.04,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  deviceInfo: {
+    fontSize: width * 0.035,
+    marginBottom: 5,
+  },
+  editButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 5,
   },
 });
 
