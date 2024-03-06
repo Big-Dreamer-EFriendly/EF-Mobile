@@ -19,7 +19,7 @@ const AddDevices = ({ navigation }) => {
       let filtered = devicesData.filter(device => device.name.toLowerCase().includes(searchText.toLowerCase()));
 
       if (selectedCategory) {
-        filtered = filtered.filter(device => device.categoryId === selectedCategory._id);
+        filtered = filtered.filter(device => device.categoryId._id === selectedCategory._id);
       }
 
       setFilteredDevices(filtered);
