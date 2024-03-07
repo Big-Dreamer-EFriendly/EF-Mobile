@@ -7,14 +7,15 @@ import {
 import MainNavigate from './src/navigation/MainNavigate'
 import RegisterSuccess from './src/screens/register/RegisterSuccess';
 import { NavigationContainer } from '@react-navigation/native';
+import AllTips from './src/screens/tips/AllTips';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <MainNavigate/>
-     
+      {/* <MainNavigate/> */}
+     <AllTips/>
     </QueryClientProvider>
     
     
