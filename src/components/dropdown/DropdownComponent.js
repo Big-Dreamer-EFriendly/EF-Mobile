@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image} from 'react-native';
+import { StyleSheet, Image, Dimensions} from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import * as Yup from 'yup';
 
+const {width, height} = Dimensions.get('window')
 const provincesList = [
   { label: 'Hà Nội', value: 'Hà Nội' },
   { label: 'Hồ Chí Minh', value: 'Hồ Chí Minh' },
@@ -67,6 +69,7 @@ const provincesList = [
   { label: 'Yên Bái', value: 'Yên Bái' },
 ];
 
+
 const DropdownComponent = ({ onProvinceChange }) => {
   const [value, setValue] = useState(null);
   const handleChange = (item) => {
@@ -101,11 +104,16 @@ export default DropdownComponent;
 
 const styles = StyleSheet.create({
   dropdown: {
-    height: 55,
-    width: 320,
-    borderRadius:17,
+    height: height * 0.07,
+    width: width * 0.8,
+    paddingVertical: 0,
     paddingHorizontal: 15,
-    backgroundColor: 'rgba(217, 217, 217, 0.25)'
+    marginBottom: 10,
+    backgroundColor: 'rgba(217, 217, 217, 0.25)',
+    borderRadius: 17,
+    color: 'black',
+    // flexDirection: 'row',
+    // alignItems: 'center'
    
   },
   icon: {
@@ -114,7 +122,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   placeholderStyle: {
-    fontSize: 17,
+    fontSize: width * 0.035,
     color: '#999999'
   },
   selectedTextStyle: {
@@ -128,6 +136,7 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+    color: 'black'
   },
   itemTextStyle: {
     color:'black'

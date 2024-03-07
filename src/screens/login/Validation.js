@@ -6,6 +6,7 @@ export const Login_Schema = Yup.object().shape({
     .required('Required'),
   password: Yup.string()
     .min(8, 'Password must be at least 8 characters')
+    .max(20,'Password must have a maximum of 20 characters!')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]+$/, 'Password must contain at least one uppercase letter, one lowercase letter, and one digit')
     .required('Required')
   
