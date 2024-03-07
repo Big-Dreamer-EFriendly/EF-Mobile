@@ -92,7 +92,7 @@ const InforDetailDevice = ({ navigation }) => {
             <Text style={styles.devicePower}>Power:{devicesData.powerConsumption} kW</Text>
           </View>
           <View style={styles.chooseRoom}>
-            <Text style={styles.subtitle}>Choose room:</Text>
+            <Text style={styles.subtitle}>Select a room:</Text>
             <FlatList
               horizontal
               showsHorizontalScrollIndicator={false}

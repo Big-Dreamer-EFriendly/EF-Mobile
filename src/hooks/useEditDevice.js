@@ -4,16 +4,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useEditRoom = ({ navigation }) => {
+const useEditDevice = ({ navigation }) => {
     const queryClient = useQueryClient();
-
   const mutation = useMutation({
-    mutationFn: async ({ id, data }) => {
+    mutationFn: async ({  data }) => {
       const userTokenObject = await AsyncStorage.getItem('user');
       const userToken = JSON.parse(userTokenObject)?.token || '';
       
       try {
-        const res = await axios.put(`${api_endpoints}/rooms/${id}`, data, {
+        console.log("data",data);
+        const res = await axios.put(`${api_endpoints}/devicesInRoom`, data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -23,10 +23,10 @@ const useEditRoom = ({ navigation }) => {
         console.log(data);
 
         if (res.status === 200) {
-          Alert.alert('Success', 'Room updated successfully', [
-            { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
+          Alert.alert('Success', 'Device updated successfully', [
+            { text: 'OK', onPress: () => navigation.navigate('InforDetailDevice') },
           ]);
-          queryClient.invalidateQueries('rooms');
+          queryClient.invalidateQueries('devices');
 
         } else if (res.status === 401) {
           Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
@@ -40,11 +40,11 @@ const useEditRoom = ({ navigation }) => {
     },
   });
 
-  const handleEditRoom = (id, data) => {
-    mutation.mutate({ id, data }); 
+  const handleEditDevice = ( data) => {
+    mutation.mutate({  data }); 
   };
 
-  return { handleEditRoom };
+  return { handleEditDevice };
 };
 
-export default useEditRoom;
+export default useEditDevice;

@@ -16,9 +16,8 @@ const ShowRoom = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.button}>
-      <TouchableOpacity onPress={() => navigation.navigate('DetailRoom')}>
+      <TouchableOpacity onPress={() => navigation.navigate('DetailRoom',{roomId :item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices})}>
         <Text style={styles.roomText}>{item.name}</Text>
-
         <View style={styles.column}>
           <Text style={styles.labelText}>Monthly Electric Consumption</Text>
           <Text style={styles.valueText}>0 KWh</Text>
