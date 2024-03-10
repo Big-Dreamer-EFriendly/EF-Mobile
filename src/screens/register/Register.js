@@ -177,7 +177,7 @@ const Register = ({ navigation }) => {
                     style={styles.btnLogin}
                     onPress={handleSubmit}
                   >
-                    <Text style={styles.textStartBtn}>Sign up</Text>
+                    <Text style={styles.textStartBtn}>Sign Up</Text>
                   </TouchableOpacity>
                   <View style={styles.transforContainer}>
                     <Text style={styles.textTransfor}>

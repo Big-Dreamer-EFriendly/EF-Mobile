@@ -6,20 +6,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 const Introduction = ({ navigation }) => {
-  // useEffect(() => {
-  //   checkUser();
-  // }, []);
+  useEffect(() => {
+    checkUser();
+  }, []);
 
-  // const checkUser = async () => {
-  //   try {
-  //     const userToken = await AsyncStorage.getItem('user');
-  //     if (userToken) {
-  //       navigation.navigate('BottomTabs');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error checking user:', error);
-  //   }
-  // };
+  const checkUser = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('user');
+      if (userToken) {
+        navigation.navigate('BottomTabs');
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    }
+  };
  
   return (
     <View style={styles.container}>
