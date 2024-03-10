@@ -4,35 +4,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useEditRoom = ({ navigation }) => {
+const useEditDeviceAir = ({ navigation }) => {
     const queryClient = useQueryClient();
-
   const mutation = useMutation({
-    mutationFn: async ({ id, data }) => {
+    mutationFn: async ({  data }) => {
       const userTokenObject = await AsyncStorage.getItem('user');
       const userToken = JSON.parse(userTokenObject)?.token || '';
       
       try {
-        const res = await axios.put(`${api_endpoints}/rooms/${id}`, data, {
+        console.log("data",data);
+        const res = await axios.put(`${api_endpoints}/devicesInRoom/air-co`, data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
           validateStatus: (status) => true,
         });
 
-        console.log(data);
-        console.log(id);
+        console.log("en",data);
+
         if (res.status === 200) {
-          Alert.alert('Success', 'Room updated successfully', [
-            { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
-          ]);
-          queryClient.invalidateQueries('rooms');
-          
+          Alert.alert('Success', 'Device updated successfully')
+          queryClient.invalidateQueries('devices');
+
         } else if (res.status === 401) {
           Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
         } else {
-          console.log(res.status);
-          Alert.alert('Error', 'An unexpected error occurred while updating the room.');
+          Alert.alert('Error', 'An unexpected error occurred while updating the device.');
         }
       } catch (error) {
         console.error(error);
@@ -41,11 +38,11 @@ const useEditRoom = ({ navigation }) => {
     },
   });
 
-  const handleEditRoom = (id, data) => {
-    mutation.mutate({ id, data }); 
+  const handleEditDeviceAir = ( data) => {
+    mutation.mutate({  data }); 
   };
 
-  return { handleEditRoom };
+  return { handleEditDeviceAir };
 };
 
-export default useEditRoom;
+export default useEditDeviceAir;

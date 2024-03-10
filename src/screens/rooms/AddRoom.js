@@ -12,7 +12,11 @@ const AddRoom = ({ navigation }) => {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Room Name is required'),
-    floor: Yup.number().required('Floor is required').positive('Floor must be positive'),
+    floor: Yup.number()
+    .required('Floor is required')
+    .integer('Floor must be an integer')
+    .min(0, 'Floor must be at least 0')
+    .max(20, 'Floor must be at most 20'),
   });
 
   return (

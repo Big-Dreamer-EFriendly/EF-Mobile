@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     width: width * 0.13,
     height: height * 0.06,
     borderRadius: width * 0.02,
+    marginRight: width * 0.05
   },
   newLabel: {
     marginRight: width * 0.02,

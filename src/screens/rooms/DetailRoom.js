@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,8 @@ import useGetDevicesByRoom from '../../hooks/useGetDeviceByRoom';
 import useGetCategories from '../../hooks/useGetCategories';
 import * as yup from 'yup'; 
 import useEditDevice from '../../hooks/useEditDevice';
+import useEditDeviceAir from '../../hooks/useEditDeviceAir';
+import useDeleteDevice from '../../hooks/useDeleteDevice';
 
 const { width, height } = Dimensions.get('window');
 
@@ -53,11 +55,13 @@ const DetailRoom = ({ route, navigation }) => {
   const { data: deviceData, isLoading: isDevicesLoading } = useGetDevicesByRoom(roomId);
   const { data: categoriesData } = useGetCategories();
   const { handleEditDevice } = useEditDevice({ navigation });
-
+  const {handleEditDeviceAir} = useEditDeviceAir({navigation})
   const [groupedDevices, setGroupedDevices] = useState([]);
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([{ key: 'info', title: 'General Info' }]);
+  const { handleDeleteDevice } = useDeleteDevice({ navigation });
 
+console.log(deviceData);
   useEffect(() => {
     if (deviceData?.data && categoriesData) {
       const categoryMap = new Map();
@@ -89,6 +93,8 @@ const DetailRoom = ({ route, navigation }) => {
     }
   }, [deviceData, categoriesData]);
 
+
+  
   const renderGeneralInfo = () => (
     <ScrollView style={styles.scrollView}>
       <View style={styles.generalInfoContainer}>
@@ -108,9 +114,15 @@ const DetailRoom = ({ route, navigation }) => {
           {category.categoryName === 'Air-conditioner' && (
             <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
           )}
-          <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
-            <Icon name='square-edit-outline' color={'grey'} size={20} />
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
+              <Icon name='square-edit-outline' color={'#FF8A1E'} size={20} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteDevice(device._id)}>
+            <Icon name='delete' color={'gray'} size={20} />
           </TouchableOpacity>
+          </View>
+          
         </View>
       ))}
     </ScrollView>
@@ -127,10 +139,12 @@ const DetailRoom = ({ route, navigation }) => {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editedDevice, setEditedDevice] = useState(null);
 
-  const handleEditDeviceA = (device) => {
+  const handleEditDeviceA = useCallback((device) => {
+   
     setEditedDevice(device);
     setEditModalVisible(true);
-  };
+  }, []);
+
 
   const handleSaveEdit = () => {
     setEditModalVisible(false);
@@ -188,28 +202,35 @@ const DetailRoom = ({ route, navigation }) => {
           <Modal animationType="slide" transparent={true} visible={isEditModalVisible}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                {console.log(editedDevice)}
+                {console.log("edut",editedDevice)}
                 {editedDevice && (
                   <Formik
-                    initialValues={{
+                  initialValues={{
+                    deviceId: editedDevice?.deviceData._id,
+                    roomId: roomId,
+                    quantity: editedDevice?.quantity || '',
+                    timeUsed: 0,
+                    temperature: editedDevice?.temperature || 0
+                  }}
+                  validationSchema={DeviceSchema}
+                  onSubmit={(values) => {
+                    let device = {
                       deviceId: editedDevice?.deviceData._id,
                       roomId: roomId,
-                      quantity: editedDevice?.quantity || '',
+                      quantity: parseInt(values.quantity),
                       timeUsed: 0,
-                    }}
-                    validationSchema={DeviceSchema}
-                    onSubmit={(values) => {
-                      let device = {
-                        deviceId: editedDevice?.deviceData._id,
-                        roomId: roomId,
-                        quantity: parseInt(values.quantity),
-                        timeUsed: 0,
-                      };
+                      temperature: parseInt(values.temperature),
+                    };
+                    if (editedDevice.deviceData.name.toLowerCase().includes('air condition')) {
+                      handleEditDeviceAir(device);
+                    } else {
                       handleEditDevice(device);
-                      setEditModalVisible(false);
-                    }}
+                    }
+                    setEditModalVisible(false);
+                  }}
                   >
                     {(formikProps) => (
+                      
                       <>
                         <Text style={styles.deviceName}>{editedDevice.deviceData.name}</Text>
                         <Text style={{marginBottom: height * 0.01}}>Quantity:</Text>
@@ -230,7 +251,7 @@ const DetailRoom = ({ route, navigation }) => {
                             <TextInput
                               placeholder="Temperature"
                               style={styles.input}
-                              value={formikProps.values.temperature}
+                              value={formikProps.values.temperature.toString()}
                               onChangeText={formikProps.handleChange('temperature')}
                             />
                             {formikProps.touched.temperature && formikProps.errors.temperature && (
@@ -354,7 +375,13 @@ const styles = StyleSheet.create({
   editButton: {
     borderRadius: 5,
     marginTop: height * 0.01,
-    marginLeft: width * 0.75,
+    marginLeft: width * 0.70,
+  },
+  deleteButton: {
+    borderRadius: 5,
+    marginTop: height * 0.01,
+    marginLeft: width * 0.02,
+
   },
   input: {
     fontSize: width * 0.04,

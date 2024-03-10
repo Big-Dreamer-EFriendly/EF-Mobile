@@ -12,8 +12,12 @@ const useLogin = ({navigation}) => {
         const res = await axios.post(`${api_endpoints}/auth/login`, data, { validateStatus: status => true });
         // console.log(res);
         if (res.status === 200) {
+          console.log(res.data);
           const token = res.data.data;
           const user = JSON.stringify({ token });
+          const username = JSON.stringify(res.data.username)
+          await AsyncStorage.setItem('username', username);
+
           await AsyncStorage.setItem('user', user);
           Alert.alert('Success', 'Login successfully', [
             { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },

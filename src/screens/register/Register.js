@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: height * 0.01,
+    width: width * 0.7
   },
   viewFooter: {
     alignItems: 'center',

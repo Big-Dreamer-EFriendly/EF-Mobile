@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     padding: width * 0.06,
   },
   tipImage: {
-    width: '100%', // Chiều rộng 100% của phần tử cha
+    width: '100%', 
     height: height * 0.3,
     borderRadius: width * 0.02,
     marginBottom: height * 0.02,
