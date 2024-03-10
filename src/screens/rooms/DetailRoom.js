@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -18,9 +18,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import useGetDevicesByRoom from '../../hooks/useGetDeviceByRoom';
 import useGetCategories from '../../hooks/useGetCategories';
-import * as yup from 'yup'; // Yêu cầu thư viện yup để xác thực
+import * as yup from 'yup'; 
 import useEditDevice from '../../hooks/useEditDevice';
-
+import useEditDeviceAir from '../../hooks/useEditDeviceAir';
+import useDeleteDevice from '../../hooks/useDeleteDevice';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,11 +31,22 @@ const getCategoryNameById = (categoryId, categoriesData) => {
 };
 
 const DeviceSchema = yup.object({
-  quantity: yup.string().required('Quantity is required'),
-  temperature: yup.string().when('categoryName', {
-    is: 'Air-conditioner',
-    then: yup.string().required('Temperature is required for Air-conditioner'),
-  }),
+  quantity: yup
+    .number()
+    .required('Quantity is required')
+    .positive('Quantity must be a positive number')
+    .integer('Quantity must be an integer')
+    .max(30, 'Quantity must not be greater than 30'),
+  temperature: yup
+    .number()
+    .when('categoryName', {
+      is: 'Air-conditioner',
+      then: yup
+        .number()
+        .required('Temperature is required for Air-conditioner')
+        .positive('Temperature must be a positive number')
+        .max(100, 'Temperature must not be greater than 100'), 
+    }),
 });
 
 
@@ -43,28 +55,15 @@ const DetailRoom = ({ route, navigation }) => {
   const { data: deviceData, isLoading: isDevicesLoading } = useGetDevicesByRoom(roomId);
   const { data: categoriesData } = useGetCategories();
   const { handleEditDevice } = useEditDevice({ navigation });
-
+  const {handleEditDeviceAir} = useEditDeviceAir({navigation})
   const [groupedDevices, setGroupedDevices] = useState([]);
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([{ key: 'info', title: 'General Info' }]);
-  const [chartData, setChartData] = useState({
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        data: [820, 932, 901, 934, 1290, 1330, 1620],
-        type: 'bar',
-      },
-    ],
-  });
+  const { handleDeleteDevice } = useDeleteDevice({ navigation });
 
+console.log(deviceData);
   useEffect(() => {
-    if (deviceData && deviceData.data && categoriesData) {
+    if (deviceData?.data && categoriesData) {
       const categoryMap = new Map();
 
       deviceData.data.forEach((device) => {
@@ -94,6 +93,8 @@ const DetailRoom = ({ route, navigation }) => {
     }
   }, [deviceData, categoriesData]);
 
+
+  
   const renderGeneralInfo = () => (
     <ScrollView style={styles.scrollView}>
       <View style={styles.generalInfoContainer}>
@@ -105,7 +106,7 @@ const DetailRoom = ({ route, navigation }) => {
   );
 
   const renderDeviceDetails = (category) => (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ marginTop: height * 0.02 }}>
       {category.devices.map((device) => (
         <View key={device._id} style={styles.deviceCard}>
           <Text style={styles.deviceName}>{device.deviceData.name}</Text>
@@ -113,13 +114,20 @@ const DetailRoom = ({ route, navigation }) => {
           {category.categoryName === 'Air-conditioner' && (
             <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
           )}
-          <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
-          <Icon name='square-edit-outline' color={'grey'} size={20}/>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
+              <Icon name='square-edit-outline' color={'#FF8A1E'} size={20} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteDevice(device._id)}>
+            <Icon name='delete' color={'gray'} size={20} />
           </TouchableOpacity>
+          </View>
+          
         </View>
       ))}
     </ScrollView>
   );
+
   const renderScene = SceneMap({
     info: renderGeneralInfo,
     ...groupedDevices.reduce((accumulator, category, index) => {
@@ -131,13 +139,14 @@ const DetailRoom = ({ route, navigation }) => {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editedDevice, setEditedDevice] = useState(null);
 
-  const handleEditDeviceA = (device) => {
+  const handleEditDeviceA = useCallback((device) => {
+   
     setEditedDevice(device);
     setEditModalVisible(true);
-  };
+  }, []);
+
 
   const handleSaveEdit = () => {
-
     setEditModalVisible(false);
   };
 
@@ -151,10 +160,10 @@ const DetailRoom = ({ route, navigation }) => {
       renderLabel={({ route, focused, color }) => (
         <Text
           style={{
-            color: focused ? 'white' : 'gray',
+            color: focused ? 'white' : '#0F3049',
             backgroundColor: focused ? '#FF8A1E' : '#ffffff',
             fontSize: focused ? width * 0.038 : width * 0.04,
-            fontWeight: focused ? 'bold' : 'normal',
+            fontWeight: focused ? 'bold' : '500',
             alignItems: 'center',
             justifyContent: 'center',
             paddingHorizontal: width * 0.02,
@@ -170,13 +179,11 @@ const DetailRoom = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isDevicesLoading && (
+      {isDevicesLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
-      )}
-
-      {!isDevicesLoading && (
+      ) : (
         <>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
@@ -195,60 +202,72 @@ const DetailRoom = ({ route, navigation }) => {
           <Modal animationType="slide" transparent={true} visible={isEditModalVisible}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text>Edit Device</Text>
-                {console.log("device", editedDevice)}
+                {console.log("edut",editedDevice)}
                 {editedDevice && (
-
-                <Formik
+                  <Formik
                   initialValues={{
                     deviceId: editedDevice?.deviceData._id,
                     roomId: roomId,
-                    quantity: editedDevice?.quantity|| '',
-                    timeUsed: 0
+                    quantity: editedDevice?.quantity || '',
+                    timeUsed: 0,
+                    temperature: editedDevice?.temperature || 0
                   }}
                   validationSchema={DeviceSchema}
-                  onSubmit={values => {
-                    console.log(values);
-                    setTimeout(() => {
-                      let device = {
-                        deviceId: editedDevice?.deviceData._id,
-                        roomId: roomId,
-                        quantity: parseInt(values.quantity),
-                        timeUsed: 0,
-                      };
-                      handleEditDevice( device);
-                    }, 100);}}
-                >
-                  {(formikProps) => (
-                    <>
-                      <TextInput
-                        placeholder="Quantity"
-                        style={{ color: 'black' }}
-                        value={formikProps.values.quantity.toString()}
-                        onChangeText={formikProps.handleChange('quantity')}
-                      />
-                      {formikProps.touched.quantity && formikProps.errors.quantity && (
-                        <Text style={{ color: 'red' }}>{formikProps.errors.quantity}</Text>
-                      )}
+                  onSubmit={(values) => {
+                    let device = {
+                      deviceId: editedDevice?.deviceData._id,
+                      roomId: roomId,
+                      quantity: parseInt(values.quantity),
+                      timeUsed: 0,
+                      temperature: parseInt(values.temperature),
+                    };
+                    if (editedDevice.deviceData.name.toLowerCase().includes('air condition')) {
+                      handleEditDeviceAir(device);
+                    } else {
+                      handleEditDevice(device);
+                    }
+                    setEditModalVisible(false);
+                  }}
+                  >
+                    {(formikProps) => (
+                      
+                      <>
+                        <Text style={styles.deviceName}>{editedDevice.deviceData.name}</Text>
+                        <Text style={{marginBottom: height * 0.01}}>Quantity:</Text>
+                        <TextInput
+                          placeholder="Quantity"
+                          style={styles.input}
+                          value={formikProps.values.quantity.toString()}
+                          onChangeText={formikProps.handleChange('quantity')}
+                        />
+                        {formikProps.touched.quantity && formikProps.errors.quantity && (
+                          <Text style={styles.errorText}>{formikProps.errors.quantity}</Text>
+                        )}
 
-                      {editedDevice?.categoryName === 'Air-conditioner' && (
-                        <>
-                          <TextInput
-                            placeholder="Temperature"
-                            value={formikProps.values.temperature}
-                            onChangeText={formikProps.handleChange('temperature')}
-                          />
-                          {formikProps.touched.temperature && formikProps.errors.temperature && (
-                            <Text style={{ color: 'red' }}>{formikProps.errors.temperature}</Text>
-                          )}
-                        </>
-                      )}
+                        {editedDevice?.deviceData.name.toLowerCase().includes('air condition') && (
+                          <>
+                            <Text style={{marginBottom: height * 0.01}}>Temperature:</Text>
 
-                      <Button title="Save" onPress={formikProps.handleSubmit} />
-                      <Button title="Cancel" onPress={() => setEditModalVisible(false)} />
-                    </>
-                  )}
-                </Formik>)}
+                            <TextInput
+                              placeholder="Temperature"
+                              style={styles.input}
+                              value={formikProps.values.temperature.toString()}
+                              onChangeText={formikProps.handleChange('temperature')}
+                            />
+                            {formikProps.touched.temperature && formikProps.errors.temperature && (
+                              <Text style={styles.errorText}>{formikProps.errors.temperature}</Text>
+                            )}
+                          </>
+                        )}
+
+                        <View style={styles.buttonContainer}>
+                          <Button title="Save" onPress={formikProps.handleSubmit} color={'#FF8A1E'}/>
+                          <Button title="Cancel" onPress={() => setEditModalVisible(false)} color={'gray'} />
+                        </View>
+                      </>
+                    )}
+                  </Formik>
+                )}
               </View>
             </View>
           </Modal>
@@ -312,39 +331,86 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
+    width: width * 0.8,
+    padding: width * 0.04,
+    borderRadius: width * 0.03,
     backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    color: 'black',
+    fontSize: width * 0.04,
+    marginBottom: height * 0.02,
   },
   deviceCard: {
     backgroundColor: '#fff',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 10,
+    padding: width * 0.02,
+    marginBottom: height * 0.03,
+    borderRadius: width * 0.02,
     borderWidth: 1,
     borderColor: '#ddd',
   },
   deviceName: {
     fontSize: width * 0.04,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: height * 0.01,
+    color: 'black',
   },
   deviceInfo: {
     fontSize: width * 0.035,
     marginBottom: 5,
   },
   editButton: {
-    backgroundColor: '#3498db',
-    padding: 10,
     borderRadius: 5,
+    marginTop: height * 0.01,
+    marginLeft: width * 0.70,
+  },
+  deleteButton: {
+    borderRadius: 5,
+    marginTop: height * 0.01,
+    marginLeft: width * 0.02,
+
+  },
+  input: {
+    fontSize: width * 0.04,
+    marginBottom: height * 0.02,
+    padding: width * 0.02,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: width * 0.02,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: height * 0.01,
+  },
+  button: {
+    flex: 1,
+    backgroundColor: '#FF8A1E',
+    borderRadius: width * 0.02,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 5,
+    padding: width * 0.02,
+    marginHorizontal: width * 0.02,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: width * 0.04,
+    fontWeight: '700',
+  },
+  errorText: {
+    color: 'red',
   },
 });
 

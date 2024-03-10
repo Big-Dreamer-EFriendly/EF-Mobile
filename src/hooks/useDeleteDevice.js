@@ -4,45 +4,44 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useEditDevice = ({ navigation }) => {
-    const queryClient = useQueryClient();
+const useDeleteDevice = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
-    mutationFn: async ({  data }) => {
+    mutationFn: async (id) => {
       const userTokenObject = await AsyncStorage.getItem('user');
       const userToken = JSON.parse(userTokenObject)?.token || '';
-      
+
       try {
-        console.log("data",data);
-        const res = await axios.put(`${api_endpoints}/devicesInRoom`, data, {
+        const res = await axios.delete(`${api_endpoints}/devicesInRoom/${id}`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
           validateStatus: (status) => true,
         });
 
-        console.log(data);
-
-        if (res.status === 200) {
-          Alert.alert('Success', 'Device updated successfully')
+        if (res.status === 204) {
+          // Phòng đã được xóa thành công
           queryClient.invalidateQueries('devices');
+          Alert.alert('Success', 'Delete room successfull');
 
         } else if (res.status === 401) {
           Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
         } else {
-          Alert.alert('Error', 'An unexpected error occurred while updating the room.');
+          Alert.alert('Error', 'An unexpected error occurred while deleting the room.');
         }
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'An error occurred while updating the room. Please try again.');
+        Alert.alert('Error', 'An error occurred while deleting the room. Please try again.');
       }
     },
   });
 
-  const handleEditDevice = ( data) => {
-    mutation.mutate({  data }); 
+  const handleDeleteDevice = (id) => {
+    mutation.mutate(id);
   };
 
-  return { handleEditDevice };
+  return { handleDeleteDevice, isLoading: mutation.isLoading };
 };
 
-export default useEditDevice;
+export default useDeleteDevice;

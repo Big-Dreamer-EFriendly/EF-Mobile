@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { Formik } from 'formik';
 import useAddroom from '../../hooks/useAddroom';
@@ -12,7 +12,11 @@ const AddRoom = ({ navigation }) => {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Room Name is required'),
-    floor: Yup.number().required('Floor is required').positive('Floor must be positive'),
+    floor: Yup.number()
+      .required('Floor is required')
+      .integer('Floor must be an integer')
+      .min(0, 'Floor must be at least 0')
+      .max(20, 'Floor must be at most 20'),
   });
 
   return (
@@ -23,15 +27,17 @@ const AddRoom = ({ navigation }) => {
           floor: '',
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
+        onSubmit={async (values, { resetForm }) => {
           handleAddRoom(values);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          resetForm();
         }}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View>
             <View style={styles.header}>
               <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
-                <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
+                <Image source={require('../../assets/iconback.png')} style={styles.iconback} />
               </TouchableOpacity>
               <Text style={styles.title}>Add new room</Text>
               <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
@@ -45,9 +51,7 @@ const AddRoom = ({ navigation }) => {
               onBlur={handleBlur('name')}
               keyboardType="default"
             />
-            {touched.name && errors.name && (
-              <Text style={styles.errorText}>{errors.name}</Text>
-            )}
+            {touched.name && errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
             <InputWithIcon
               icon={require('../../assets/iconfloor.png')}
@@ -57,9 +61,7 @@ const AddRoom = ({ navigation }) => {
               onBlur={handleBlur('floor')}
               keyboardType="numeric"
             />
-            {touched.floor && errors.floor && (
-              <Text style={styles.errorText}>{errors.floor}</Text>
-            )}
+            {touched.floor && errors.floor && <Text style={styles.errorText}>{errors.floor}</Text>}
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Save</Text>
@@ -106,17 +108,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: width * 0.25,
-    marginTop: height * 0.01
+    marginTop: height * 0.01,
   },
   buttonText: {
     color: '#fff',
     fontSize: width * 0.05,
-    fontWeight: '700'
+    fontWeight: '700',
   },
   errorText: {
     color: 'red',
     marginLeft: width * 0.03,
-    marginBottom: height * 0.01
+    marginBottom: height * 0.01,
   },
 });
 

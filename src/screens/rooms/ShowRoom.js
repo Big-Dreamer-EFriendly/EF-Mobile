@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useDeleteRoom from '../../hooks/useDeleteRoom';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import useGetRoom from '../../hooks/useGetRoom';
@@ -11,6 +12,7 @@ const ShowRoom = ({ navigation }) => {
   const toggleButton = () => {
     setToggleState(!toggleState);
   };
+  const { handleDeleteRoom, isLoading: isDeleting } = useDeleteRoom();
 
   const { data, isFetching } = useGetRoom();
 
@@ -28,10 +30,13 @@ const ShowRoom = ({ navigation }) => {
         </View>
 
         <Text style={styles.labelText}>Floor: {item.floor}</Text>
-        <View style={styles.column}>
+        <View style={styles.column2}>
           <Text style={styles.numberDevice}>{item.numberOfDevices} devices</Text>
-          <TouchableOpacity style={styles.numberDevice} onPress={() => navigation.navigate('EditRoom', { roomId: item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices })}>
-            <Icon name='square-edit-outline' color={'grey'} size={20}/>
+          <TouchableOpacity style={[styles.numberDevice, {marginLeft: width * 0.5}]} onPress={() => navigation.navigate('EditRoom', { roomId: item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices })}>
+            <Icon name='square-edit-outline' color={'#FA812E'} size={20}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.numberDevice, {marginLeft: width * 0.02}]} onPress={() => handleDeleteRoom(item._id)} disabled={isDeleting}>
+            <Icon name='delete' color={'grey'} size={20}/>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -41,6 +46,7 @@ const ShowRoom = ({ navigation }) => {
           isOn={toggleState}
           onColor="#42CFB6"
           offColor="#D9D9D9"
+          disabled={true}
           size="small"
           onToggle={toggleButton}
         />
@@ -63,6 +69,12 @@ const ShowRoom = ({ navigation }) => {
         </View>
       ) : data ? (
         <FlatList
+        ListHeaderComponent={ 
+        <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
+        <Icon name={'plus-circle'}  color={'white'} size={40} />
+        <Text style={{color: 'white', fontWeight: '600'}}>Add new room</Text>
+      </TouchableOpacity>}
+          showsVerticalScrollIndicator={false}
           style={styles.flatList}
           data={data.data}
           renderItem={renderItem}
@@ -72,9 +84,7 @@ const ShowRoom = ({ navigation }) => {
       ) : (
         <Text style={styles.title}>No data available</Text>
       )}
-      <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
-        <Icon name={'plus-circle'} color="#42CFB6" size={40} />
-      </TouchableOpacity>
+     
     </SafeAreaView >
   );
 };
@@ -105,7 +115,7 @@ const styles = StyleSheet.create({
     height: height * 0.03,
   },
   flatList: {
-    marginBottom: height * 0.05
+    marginBottom: height * 0.09
   },
   button: {
     backgroundColor: '#ffffff',
@@ -166,10 +176,17 @@ const styles = StyleSheet.create({
   },
 
   buttonPlus: {
-    position: 'absolute',
-    justifyContent: 'center',
-    bottom: height * 0.08,
-    right: width * 0.04
+    // justifyContent: 'center',
+    alignItems:'center',
+    gap: width * 0.01,
+    flexDirection:'row',
+    backgroundColor:'#42CFB6',
+    marginLeft: width * 0.5,
+    borderRadius: width * 0.03,
+    paddingHorizontal: width * 0.01,
+    paddingVertical: height * 0.005, 
+    marginTop: height * 0.015
+  
   },
   plus: {
     fontSize: width * 0.06
@@ -180,16 +197,21 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.015,
     justifyContent: 'space-between'
   },
+  column2: {
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom: height * 0.015,
+  },
   labelText: {
     fontSize: width * 0.04,
     color: 'black',
-    marginRight: width * 0.15
-
+    
   },
   valueText: {
     fontSize: width * 0.04,
     color: '#FA812E',
-    fontWeight: '500'
+    fontWeight: '500',
+    marginLeft: width * 0.08
   },
   loadingContainer: {
     flex: 1,
@@ -209,7 +231,6 @@ const styles = StyleSheet.create({
 });
 
 export default ShowRoom;
-
 
 
 

@@ -1,19 +1,38 @@
 import { StyleSheet, Text, View, Image, Dimensions, } from 'react-native'
-import React from 'react'
+import React ,  { useEffect, useState } from 'react'
 import Swiper from 'react-native-swiper';
 import warningImage from '../../assets/warning.png';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 const {width,height} = Dimensions.get('window');
 
 
 const Home = () => {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const getUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        console.log(storedUsername);
+        if (storedUsername !== null) {
+          setUsername(storedUsername.replace(/"/g, ''));
+        }
+      } catch (error) {
+        console.error('Error retrieving username from AsyncStorage:', error);
+      }
+    };
+  
+    getUsername();
+  }, []);
+  
   return (
     <View style={styles.container}>
       <View style={{backgroundColor:'#ffffff'}}>
       <View style={styles.profileContainer}>
         <View style={{flexDirection:'row'}}>
         <Image source={require('../../assets/profilehome.png')} style={styles.profileImage} />
-        <Text style={styles.profileName}>Hello,{'\n'}Nhat Nguyen</Text>
+        <Text style={styles.profileName}>Hello,{'\n'}{username}</Text>
         </View>
         <Image source={require('../../assets/bell.png')} style={styles.bellIcon} />
       </View>

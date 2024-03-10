@@ -177,7 +177,7 @@ const Register = ({ navigation }) => {
                     style={styles.btnLogin}
                     onPress={handleSubmit}
                   >
-                    <Text style={styles.textStartBtn}>Sign up</Text>
+                    <Text style={styles.textStartBtn}>Sign Up</Text>
                   </TouchableOpacity>
                   <View style={styles.transforContainer}>
                     <Text style={styles.textTransfor}>
@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: height * 0.01,
+    width: width * 0.7
   },
   viewFooter: {
     alignItems: 'center',

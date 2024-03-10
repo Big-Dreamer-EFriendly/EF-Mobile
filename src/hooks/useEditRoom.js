@@ -21,16 +21,17 @@ const useEditRoom = ({ navigation }) => {
         });
 
         console.log(data);
-
+        console.log(id);
         if (res.status === 200) {
           Alert.alert('Success', 'Room updated successfully', [
             { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
           ]);
           queryClient.invalidateQueries('rooms');
-
+          
         } else if (res.status === 401) {
           Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
         } else {
+          console.log(res.status);
           Alert.alert('Error', 'An unexpected error occurred while updating the room.');
         }
       } catch (error) {

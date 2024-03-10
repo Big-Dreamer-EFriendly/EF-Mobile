@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useEditDevice = ({ navigation }) => {
+const useEditDeviceAir = ({ navigation }) => {
     const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async ({  data }) => {
@@ -13,14 +13,14 @@ const useEditDevice = ({ navigation }) => {
       
       try {
         console.log("data",data);
-        const res = await axios.put(`${api_endpoints}/devicesInRoom`, data, {
+        const res = await axios.put(`${api_endpoints}/devicesInRoom/air-co`, data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
           validateStatus: (status) => true,
         });
 
-        console.log(data);
+        console.log("en",data);
 
         if (res.status === 200) {
           Alert.alert('Success', 'Device updated successfully')
@@ -29,7 +29,7 @@ const useEditDevice = ({ navigation }) => {
         } else if (res.status === 401) {
           Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
         } else {
-          Alert.alert('Error', 'An unexpected error occurred while updating the room.');
+          Alert.alert('Error', 'An unexpected error occurred while updating the device.');
         }
       } catch (error) {
         console.error(error);
@@ -38,11 +38,11 @@ const useEditDevice = ({ navigation }) => {
     },
   });
 
-  const handleEditDevice = ( data) => {
+  const handleEditDeviceAir = ( data) => {
     mutation.mutate({  data }); 
   };
 
-  return { handleEditDevice };
+  return { handleEditDeviceAir };
 };
 
-export default useEditDevice;
+export default useEditDeviceAir;
