@@ -21,6 +21,7 @@ import InforDetailDevice from '../screens/devices/InforDetailDevice';
 import EditRoom from '../screens/rooms/EditRoom';
 import DetailRoom from '../screens/rooms/DetailRoom';
 import DetailTip from '../screens/tips/DetailTip';
+import Widget from '../screens/widget/Widget';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -96,6 +97,10 @@ const MainNavigate = () => {
                      <Stack.Screen 
                     name="DetailTip"
                     component={DetailTip}
+                    options={{headerShown: false}} />
+                  <Stack.Screen 
+                    name="Widget"
+                    component={Widget}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>
