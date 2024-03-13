@@ -22,6 +22,7 @@ import EditRoom from '../screens/rooms/EditRoom';
 import DetailRoom from '../screens/rooms/DetailRoom';
 import DetailTip from '../screens/tips/DetailTip';
 import Widget from '../screens/widget/Widget';
+import RoomListScreen, { DeviceListScreen, DeviceToggle } from '../screens/widget/DeviceList';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -101,6 +102,18 @@ const MainNavigate = () => {
                   <Stack.Screen 
                     name="Widget"
                     component={Widget}
+                    options={{headerShown: false}} />
+                <Stack.Screen 
+                    name="DeviceToggle"
+                    component={DeviceToggle}
+                    options={{headerShown: false}} />
+                <Stack.Screen 
+                    name="DeviceList"
+                    component={DeviceListScreen}
+                    options={{headerShown: false}} />
+                <Stack.Screen 
+                    name="RoomList"
+                    component={RoomListScreen}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>

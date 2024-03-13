@@ -1,0 +1,48 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+import { api_endpoints } from '../api/apiUrl';
+
+const useUpdateStatus = ({ navigation }) => {
+    const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({ data }) => {
+      const userTokenObject = await AsyncStorage.getItem('user');
+      const userToken = JSON.parse(userTokenObject)?.token || '';
+      console.log("hi",data);
+      try {
+        const res = await axios.put(`${api_endpoints}/devicesInRoom/status`, data, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+          validateStatus: (status) => true,
+        });
+
+    
+        if (res.status === 200) {
+          Alert.alert('Success', 'Room updated successfully')
+          queryClient.invalidateQueries('devicesStatus');
+          
+        } else if (res.status === 401) {
+          Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
+        } else {
+          console.log(res.status);
+          Alert.alert('Error', res.data.message);
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert('Error', 'An error occurred while updating the room. Please try again.');
+      }
+    },
+  });
+
+  const handleUpdateStatus = (data) => {
+    mutation.mutate({ data }); 
+  };
+
+  return { handleUpdateStatus };
+};
+
+export default useUpdateStatus;

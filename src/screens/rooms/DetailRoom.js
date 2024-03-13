@@ -11,6 +11,7 @@ import {
   Modal,
   ActivityIndicator,
   ScrollView,
+  Switch
 } from 'react-native';
 import { ECharts } from 'react-native-echarts-wrapper';
 import { Formik } from 'formik';
@@ -22,7 +23,7 @@ import * as yup from 'yup';
 import useEditDevice from '../../hooks/useEditDevice';
 import useEditDeviceAir from '../../hooks/useEditDeviceAir';
 import useDeleteDevice from '../../hooks/useDeleteDevice';
-
+import useUpdateStatus from '../../hooks/useUpdateStatus';
 const { width, height } = Dimensions.get('window');
 
 const getCategoryNameById = (categoryId, categoriesData) => {
@@ -53,6 +54,7 @@ const DeviceSchema = yup.object({
 const DetailRoom = ({ route, navigation }) => {
   const { roomId, name, floor, numberOfDevices } = route.params;
   const { data: deviceData, isLoading: isDevicesLoading } = useGetDevicesByRoom(roomId);
+  console.log(roomId);
   const { data: categoriesData } = useGetCategories();
   const { handleEditDevice } = useEditDevice({ navigation });
   const {handleEditDeviceAir} = useEditDeviceAir({navigation})
@@ -60,6 +62,7 @@ const DetailRoom = ({ route, navigation }) => {
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([{ key: 'info', title: 'General Info' }]);
   const { handleDeleteDevice } = useDeleteDevice({ navigation });
+  const { handleUpdateStatus } = useUpdateStatus({ navigation });
 
 console.log(deviceData);
   useEffect(() => {
@@ -105,28 +108,37 @@ console.log(deviceData);
     </ScrollView>
   );
 
-  const renderDeviceDetails = (category) => (
+  const renderDeviceDetails = (category) => {
+    const [value, setValue] = useState(false);
+    return (
     <ScrollView contentContainerStyle={{ marginTop: height * 0.02 }}>
       {category.devices.map((device) => (
+        
         <View key={device._id} style={styles.deviceCard}>
+          {console.log(device)}
           <Text style={styles.deviceName}>{device.deviceData.name}</Text>
           <Text style={styles.deviceInfo}>Quantity: {device.quantity}</Text>
           {category.categoryName === 'Air-conditioner' && (
             <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
           )}
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Switch
+              value={device.isStatus} 
+              onValueChange={(value) => handleUpdateStatus({ roomId, deviceId: device.deviceData._id, isStatus: value })}
+            />
+            <Text style={{ marginLeft: 10 }}>{device.isStatus ? 'ON' : 'OFF'}</Text>
             <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
               <Icon name='square-edit-outline' color={'#FF8A1E'} size={20} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteDevice(device._id)}>
-            <Icon name='delete' color={'gray'} size={20} />
-          </TouchableOpacity>
+              <Icon name='delete' color={'gray'} size={20} />
+            </TouchableOpacity>
           </View>
-          
         </View>
       ))}
     </ScrollView>
-  );
+  )};
+
 
   const renderScene = SceneMap({
     info: renderGeneralInfo,

@@ -8,6 +8,7 @@ import Profile from '../screens/profile/Profile';
 import ShowRoom from '../screens/rooms/ShowRoom';
 import AllTips from '../screens/tips/AllTips';
 import Widget from '../screens/widget/Widget';
+import RoomListScreen from '../screens/widget/DeviceList';
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
 
@@ -98,7 +99,7 @@ const BottomTabs = () => {
       />
       <CurvedBottomBar.Screen
         name="Profile"
-        component={Widget}
+        component={RoomListScreen}
         position="RIGHT"
         options={{ headerShown: false }}
       />

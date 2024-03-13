@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Switch, StyleSheet, ActivityIndicator, NativeModules } from 'react-native';
 import axios from 'axios';
 import useGetRoom from '../../hooks/useGetRoom';
 import useGetDevicesByRoom from '../../hooks/useGetDeviceByRoom';
 import { api_endpoints } from '../../api/apiUrl';
 
-const DeviceToggle = ({ device, onToggle }) => {
-  const [isOn, setOn] = useState(device.quantity > 0);
+// const SharedStorage = NativeModules.SharedStorage;
+
+export const DeviceToggle = ({ device, onToggle }) => {
+  const [isOn, setOn] = useState(true);
 
   const toggleSwitch = () => {
     setOn(!isOn);
@@ -21,13 +23,14 @@ const DeviceToggle = ({ device, onToggle }) => {
   );
 };
 
-const DeviceListScreen = ({ route }) => {
+export const DeviceListScreen = ({ route }) => {
   const { roomId } = route.params;
+  const {isOn,setIsOn} = useState(false)
+  console.log(roomId);
   const { data: deviceData, isLoading: isDevicesLoading } = useGetDevicesByRoom(roomId);
-
-
-  const handleToggle = (deviceId,roomId, isOn) => {
-    axios.post(`${api_endpoints}/devicesInRoom/status`, { deviceId, roomId, isOn })
+    console.log(deviceData);
+    const handleToggle = (data) => {
+    axios.post(`${api_endpoints}/devicesInRoom/status`,  data)
       .then(response => {
         console.log('Toggle response:', response.data);
       })
@@ -38,23 +41,24 @@ const DeviceListScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+       
       <FlatList
-        data={deviceData.data}
+        data={deviceData?.data}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => <DeviceToggle device={item} onToggle={handleToggle} />}
+        renderItem={({ item }) => <DeviceToggle device={item} onToggle={handleToggle(item._id,roomId, !isOn)} />}
       />
     </View>
   );
 };
 
-const RoomListScreen = ({ navigation }) => {
-    const { roomData, isFetching } = useGetRoom();
-
-
+ const RoomListScreen = ({ navigation }) => {
+    const { data: roomData, isFetching } = useGetRoom();
+    console.log("roomdata",roomData);
   return (
     <View style={styles.container}>
+        {isFetching && <ActivityIndicator></ActivityIndicator>}
       <FlatList
-        data={roomData}
+        data={roomData?.data}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -69,16 +73,6 @@ const RoomListScreen = ({ navigation }) => {
   );
 };
 
-const App = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="RoomList">
-        <Stack.Screen name="RoomList" component={RoomListScreen} />
-        <Stack.Screen name="DeviceList" component={DeviceListScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -100,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default RoomListScreen;

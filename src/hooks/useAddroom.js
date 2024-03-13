@@ -26,7 +26,7 @@ const useAddroom = ({navigation}) => {
             { text: 'OK', onPress: () => navigation.navigate('Show room') },
           ]);
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Invalid information');
+          Alert.alert('Error', res.data.message);
         } else {
           Alert.alert('Error', 'An unexpected error occurred');
         }
