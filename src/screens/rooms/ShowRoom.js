@@ -69,6 +69,7 @@ const ShowRoom = ({ navigation }) => {
         </View>
       ) : data ? (
         <FlatList
+        
         ListHeaderComponent={ 
         <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
         <Icon name={'plus-circle'}  color={'white'} size={40} />
