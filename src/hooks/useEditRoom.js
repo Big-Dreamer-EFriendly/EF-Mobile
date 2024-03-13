@@ -29,14 +29,14 @@ const useEditRoom = ({ navigation }) => {
           queryClient.invalidateQueries('rooms');
           
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
+          Alert.alert('Error', res.data.message);
         } else {
           console.log(res.status);
-          Alert.alert('Error', 'An unexpected error occurred while updating the room.');
+          Alert.alert('Error', res.data.message);
         }
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'An error occurred while updating the room. Please try again.');
+        Alert.alert('Error', error);
       }
     },
   });
