@@ -4,30 +4,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useDeleteRoom = () => {
-  const queryClient = useQueryClient();
-
+const useUpdateStatus = ({ navigation }) => {
+    const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async ({ data }) => {
       const userTokenObject = await AsyncStorage.getItem('user');
       const userToken = JSON.parse(userTokenObject)?.token || '';
-
       try {
-        const res = await axios.delete(`${api_endpoints}/rooms/${id}`, {
+        const res = await axios.put(`${api_endpoints}/devicesInRoom/status`, data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
           validateStatus: (status) => true,
         });
 
-        if (res.status === 204) {
-          // Phòng đã được xóa thành công
-          queryClient.invalidateQueries('rooms');
-          Alert.alert('Success', 'Delete room successfull');
-
+    
+        if (res.status === 200) {
+          // Alert.alert('Success', res.data.message)
+          queryClient.invalidateQueries('devicesStatus');
+          
         } else if (res.status === 401) {
-          Alert.alert('Error',res.data.message);
+          Alert.alert('Error', res.data.message);
         } else {
+          console.log(res.status);
           Alert.alert('Error', res.data.message);
         }
       } catch (error) {
@@ -37,11 +36,11 @@ const useDeleteRoom = () => {
     },
   });
 
-  const handleDeleteRoom = (id) => {
-    mutation.mutate(id);
+  const handleUpdateStatus = (data) => {
+    mutation.mutate({ data }); 
   };
 
-  return { handleDeleteRoom, isLoading: mutation.isLoading };
+  return { handleUpdateStatus };
 };
 
-export default useDeleteRoom;
+export default useUpdateStatus;

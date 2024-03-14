@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useDeleteRoom from '../../hooks/useDeleteRoom';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView, ActivityIndicator,RefreshControl } from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import useGetRoom from '../../hooks/useGetRoom';
 
@@ -13,7 +13,14 @@ const ShowRoom = ({ navigation }) => {
     setToggleState(!toggleState);
   };
   const { handleDeleteRoom, isLoading: isDeleting } = useDeleteRoom();
+  const [refreshing, setRefreshing] = useState(false);
 
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    }, []);
   const { data, isFetching } = useGetRoom();
 
   const renderItem = ({ item }) => (
@@ -69,6 +76,9 @@ const ShowRoom = ({ navigation }) => {
         </View>
       ) : data ? (
         <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         ListHeaderComponent={ 
         <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
         <Icon name={'plus-circle'}  color={'white'} size={40} />

@@ -11,6 +11,7 @@ import {
   Modal,
   ActivityIndicator,
   ScrollView,
+  Switch
 } from 'react-native';
 import { ECharts } from 'react-native-echarts-wrapper';
 import { Formik } from 'formik';
@@ -22,7 +23,7 @@ import * as yup from 'yup';
 import useEditDevice from '../../hooks/useEditDevice';
 import useEditDeviceAir from '../../hooks/useEditDeviceAir';
 import useDeleteDevice from '../../hooks/useDeleteDevice';
-
+import useUpdateStatus from '../../hooks/useUpdateStatus';
 const { width, height } = Dimensions.get('window');
 
 const getCategoryNameById = (categoryId, categoriesData) => {
@@ -60,8 +61,8 @@ const DetailRoom = ({ route, navigation }) => {
   const [index, setIndex] = useState(0);
   const [routes, setRoutes] = useState([{ key: 'info', title: 'General Info' }]);
   const { handleDeleteDevice } = useDeleteDevice({ navigation });
+  const { handleUpdateStatus } = useUpdateStatus({ navigation });
 
-console.log(deviceData);
   useEffect(() => {
     if (deviceData?.data && categoriesData) {
       const categoryMap = new Map();
@@ -105,28 +106,41 @@ console.log(deviceData);
     </ScrollView>
   );
 
-  const renderDeviceDetails = (category) => (
+  const renderDeviceDetails = (category) => {
+    const [deviceStatus, setDeviceStatus] = useState();
+    return (
     <ScrollView contentContainerStyle={{ marginTop: height * 0.02 }}>
       {category.devices.map((device) => (
+        
         <View key={device._id} style={styles.deviceCard}>
+         
           <Text style={styles.deviceName}>{device.deviceData.name}</Text>
           <Text style={styles.deviceInfo}>Quantity: {device.quantity}</Text>
           {category.categoryName === 'Air-conditioner' && (
             <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
           )}
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Switch
+              value={device.isStatus} 
+              onValueChange={(value) => handleUpdateStatus({ roomId, deviceId: device.deviceData._id, isStatus: value })}
+            />
+            <Text style={{ marginLeft: 10 }}>{device.isStatus ? 'ON' : 'OFF'}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
               <Icon name='square-edit-outline' color={'#FF8A1E'} size={20} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteDevice(device._id)}>
-            <Icon name='delete' color={'gray'} size={20} />
-          </TouchableOpacity>
+              <Icon name='delete' color={'gray'} size={20} />
+            </TouchableOpacity>
           </View>
-          
+          </View>
         </View>
       ))}
     </ScrollView>
-  );
+  )};
+
 
   const renderScene = SceneMap({
     info: renderGeneralInfo,
@@ -375,7 +389,7 @@ const styles = StyleSheet.create({
   editButton: {
     borderRadius: 5,
     marginTop: height * 0.01,
-    marginLeft: width * 0.70,
+    marginLeft: width * 0.50,
   },
   deleteButton: {
     borderRadius: 5,
