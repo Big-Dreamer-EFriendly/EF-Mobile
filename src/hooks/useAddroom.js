@@ -28,11 +28,11 @@ const useAddroom = ({navigation}) => {
         } else if (res.status === 401) {
           Alert.alert('Error', res.data.message);
         } else {
-          Alert.alert('Error', 'An unexpected error occurred');
+          Alert.alert('Error', res.data.message);
         }
       } catch (error) {
         console.log(error);
-        Alert.alert('Error', 'An error occurred while add a new room. Please try again.');
+        Alert.alert('Error', error);
       }
     },
   });

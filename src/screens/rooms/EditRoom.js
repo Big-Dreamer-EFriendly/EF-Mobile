@@ -12,13 +12,19 @@ const EditRoom = ({ route, navigation }) => {
   const { handleEditRoom } = useEditRoom({ navigation });
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Room Name is required'),
+    name: Yup.string()
+      .required('Room Name is required')
+      .matches(/^[^\s][a-zA-Z0-9\s]*$/, 'Name must not contain special characters or start with whitespace')
+      .min(1,'Name must be at least 1 character')
+      .max(30, 'Name must be at most 30'),
     floor: Yup.number()
-    .required('Floor is required')
-    .integer('Floor must be an integer')
-    .min(0, 'Floor must be at least 0')
-    .max(20, 'Floor must be at most 20'),
+      .required('Floor is required')
+      .integer('Floor must be an integer')
+      .min(0, 'Floor must be at least 0')
+      .max(20, 'Floor must be at most 20'),
   });
+  
+
 
   return (
     <View style={styles.container}>

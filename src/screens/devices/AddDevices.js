@@ -126,9 +126,9 @@ const AddDevices = ({ navigation }) => {
               }}
             >
               <View style={styles.card}>
-                <Image style={styles.imageDevice} source={require('../../assets/DeviceExample.png')} />
+                <Image style={styles.imageDevice} source={{ uri: item.imageUrl }} />
                 <Text style={styles.textName}>{item.name}</Text>
-                <Text style={styles.text}>Power: {item.powerConsumption}</Text>
+                <Text style={styles.text}>Power: {item.capacity}</Text>
               </View>
             </TouchableOpacity>
           )}

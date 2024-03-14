@@ -87,9 +87,9 @@ const InforDetailDevice = ({ navigation }) => {
               </View>
               <ScrollView>
                 <View style={styles.cardDevice}>
-                  <Image source={require("../../assets/DeviceExample.png")} style={styles.deviceImage} />
+                  <Image source={{uri: devicesData.imageUrl}} style={styles.deviceImage} />
                   <Text style={styles.deviceName}>{devicesData.name}</Text>
-                  <Text style={styles.devicePower}>Power:{devicesData.powerConsumption} kW</Text>
+                  <Text style={styles.devicePower}>Power:{devicesData.capacity} kW</Text>
                 </View>
                 <View style={styles.chooseRoom}>
                   <Text style={styles.subtitle}>Select a room:</Text>

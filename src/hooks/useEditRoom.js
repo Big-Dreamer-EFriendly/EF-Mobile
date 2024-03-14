@@ -29,7 +29,7 @@ const useEditRoom = ({ navigation }) => {
           queryClient.invalidateQueries('rooms');
           
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
+          Alert.alert('Error', res.data.message);
         } else {
           console.log(res.status);
           Alert.alert('Error', res.data.message);
