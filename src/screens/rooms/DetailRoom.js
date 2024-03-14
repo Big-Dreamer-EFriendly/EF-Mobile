@@ -54,7 +54,6 @@ const DeviceSchema = yup.object({
 const DetailRoom = ({ route, navigation }) => {
   const { roomId, name, floor, numberOfDevices } = route.params;
   const { data: deviceData, isLoading: isDevicesLoading } = useGetDevicesByRoom(roomId);
-  console.log(roomId);
   const { data: categoriesData } = useGetCategories();
   const { handleEditDevice } = useEditDevice({ navigation });
   const {handleEditDeviceAir} = useEditDeviceAir({navigation})
@@ -64,7 +63,6 @@ const DetailRoom = ({ route, navigation }) => {
   const { handleDeleteDevice } = useDeleteDevice({ navigation });
   const { handleUpdateStatus } = useUpdateStatus({ navigation });
 
-console.log(deviceData);
   useEffect(() => {
     if (deviceData?.data && categoriesData) {
       const categoryMap = new Map();
@@ -109,30 +107,34 @@ console.log(deviceData);
   );
 
   const renderDeviceDetails = (category) => {
-    const [value, setValue] = useState(false);
+    const [deviceStatus, setDeviceStatus] = useState();
     return (
     <ScrollView contentContainerStyle={{ marginTop: height * 0.02 }}>
       {category.devices.map((device) => (
         
         <View key={device._id} style={styles.deviceCard}>
-          {console.log(device)}
+         
           <Text style={styles.deviceName}>{device.deviceData.name}</Text>
           <Text style={styles.deviceInfo}>Quantity: {device.quantity}</Text>
           {category.categoryName === 'Air-conditioner' && (
             <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
           )}
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Switch
               value={device.isStatus} 
               onValueChange={(value) => handleUpdateStatus({ roomId, deviceId: device.deviceData._id, isStatus: value })}
             />
             <Text style={{ marginLeft: 10 }}>{device.isStatus ? 'ON' : 'OFF'}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity style={styles.editButton} onPress={() => handleEditDeviceA(device)}>
               <Icon name='square-edit-outline' color={'#FF8A1E'} size={20} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteDevice(device._id)}>
               <Icon name='delete' color={'gray'} size={20} />
             </TouchableOpacity>
+          </View>
           </View>
         </View>
       ))}
@@ -387,7 +389,7 @@ const styles = StyleSheet.create({
   editButton: {
     borderRadius: 5,
     marginTop: height * 0.01,
-    marginLeft: width * 0.70,
+    marginLeft: width * 0.50,
   },
   deleteButton: {
     borderRadius: 5,

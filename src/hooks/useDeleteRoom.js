@@ -26,13 +26,13 @@ const useDeleteRoom = () => {
           Alert.alert('Success', 'Delete room successfull');
 
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
+          Alert.alert('Error',res.data.message);
         } else {
-          Alert.alert('Error', 'An unexpected error occurred while deleting the room.');
+          Alert.alert('Error', res.data.message);
         }
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'An error occurred while deleting the room. Please try again.');
+        Alert.alert('Error', error);
       }
     },
   });
