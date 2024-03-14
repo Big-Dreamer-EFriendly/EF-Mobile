@@ -10,6 +10,7 @@ const useUpdateStatus = ({ navigation }) => {
     mutationFn: async ({ data }) => {
       const userTokenObject = await AsyncStorage.getItem('user');
       const userToken = JSON.parse(userTokenObject)?.token || '';
+      console.log('UPDATING STATUS')
       try {
         const res = await axios.put(`${api_endpoints}/devicesInRoom/status`, data, {
           headers: {
@@ -18,10 +19,13 @@ const useUpdateStatus = ({ navigation }) => {
           validateStatus: (status) => true,
         });
 
-    
+        console.log('Update finished')
         if (res.status === 200) {
           // Alert.alert('Success', res.data.message)
-          queryClient.invalidateQueries('devicesStatus');
+          // queryClient.invalidateQueries('devicesStatus');
+          queryClient.invalidateQueries({ queryKey: ['devicesByRoom'] });
+          
+          console.log('Invalidated')
           
         } else if (res.status === 401) {
           Alert.alert('Error', res.data.message);
@@ -36,11 +40,12 @@ const useUpdateStatus = ({ navigation }) => {
     },
   });
 
-  const handleUpdateStatus = (data) => {
-    mutation.mutate({ data }); 
+  const handleUpdateStatus = async(data) => {
+    mutation.mutateAsync({ data }); 
+    // mutation.mutate({ data }); 
   };
 
-  return { handleUpdateStatus };
+  return { handleUpdateStatus: mutation.mutateAsync };
 };
 
 export default useUpdateStatus;
