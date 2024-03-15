@@ -19,7 +19,7 @@ const AddDevices = ({ navigation }) => {
       let filtered = devicesData.filter(device => device.name.toLowerCase().includes(searchText.toLowerCase()));
 
       if (selectedCategory) {
-        filtered = filtered.filter(device => device.categoryId._id === selectedCategory._id);
+        filtered = filtered.filter(device => device.categoryId && device.categoryId._id === selectedCategory._id);
       }
 
       setFilteredDevices(filtered);
@@ -28,6 +28,7 @@ const AddDevices = ({ navigation }) => {
 
   const handleCategoryPress = (category) => {
     if (selectedCategory && selectedCategory._id === category._id) {
+      console.log("hi",selectedCategory._id);
       setSelectedCategory(null);
     } else {
       setSelectedCategory(category);
@@ -114,6 +115,7 @@ const AddDevices = ({ navigation }) => {
 
       <View style={styles.containerDevice}>
         <FlatList
+        showsVerticalScrollIndicator={false}
           data={filteredDevices}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (

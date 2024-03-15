@@ -26,9 +26,6 @@ const DeviceCard = ({ device, useEditDevice }) => {
                 <>
                     <Text style={styles.deviceInfo}>Commonly used temperature: {device.temperature}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity style={styles.editButton} onPress={handleEditDevice}>
-                            <Icon name='square-edit-outline' color={'#FF8A1E'} size={20} />
-                        </TouchableOpacity>
                         <ModalEdit
                             isVisible={isEditModalVisible}
                             onClose={() => setIsEditModalVisible(false)}
@@ -46,6 +43,7 @@ const DeviceCard = ({ device, useEditDevice }) => {
                     />
                     <Text style={{ marginLeft: 10 }}>{device.isStatus ? 'ON' : 'OFF'}</Text>
                 </View>
+                
             </View>
         </View>
     );
