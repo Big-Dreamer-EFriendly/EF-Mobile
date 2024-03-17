@@ -15,8 +15,8 @@ const DetailRoom = ({ route, navigation }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState('General');
-
-  const categories = [...new Set(deviceData?.data?.map(device => device.categoryData.name))]; 
+  console.log(deviceData);
+  const categories = [...new Set(deviceData?.data?.map(device => device.categoryData.name))];
 
   const filterDevicesByCategory = (category) => {
     return deviceData?.data?.filter(device => device.categoryData.name === category);
@@ -54,7 +54,7 @@ const DetailRoom = ({ route, navigation }) => {
       </View>
       <FlatList
         horizontal
-        style={{marginBottom: height * 0.02}}
+        style={{ marginBottom: height * 0.02 }}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.categoryContainer}
         data={['General', ...categories]}
@@ -66,8 +66,8 @@ const DetailRoom = ({ route, navigation }) => {
       )}
       {currentPage !== 'General' && (
         <FlatList
-        showsVerticalScrollIndicator={false}
-        style={{paddingTop:height * 0.01}}
+          showsVerticalScrollIndicator={false}
+          style={{ paddingTop: height * 0.01 }}
           contentContainerStyle={styles.deviceList}
           data={filterDevicesByCategory(currentPage)}
           renderItem={renderDeviceItem}
@@ -79,7 +79,10 @@ const DetailRoom = ({ route, navigation }) => {
         onClose={() => setIsEditModalVisible(false)}
         initialTemperature={selectedDevice ? selectedDevice.temperature : 0}
         onSave={handleSaveTemperature}
+        deviceId={selectedDevice && selectedDevice.deviceData ? selectedDevice._id : ""}
+        deviceName={selectedDevice && selectedDevice.deviceData ? selectedDevice.deviceData.name : ""}
       />
+
     </View>
   );
 };
@@ -119,11 +122,11 @@ const styles = StyleSheet.create({
     marginHorizontal: width * 0.01,
     borderRadius: 10,
     height: height * 0.06,
-    elevation: 5, 
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowRadius: 2, 
-  
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 2,
+
   },
   categoryText: {
     color: 'white',
