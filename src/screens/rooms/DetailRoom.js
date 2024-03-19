@@ -4,13 +4,13 @@ import DeviceCard from './DeviceCard';
 import ModalEdit from './ModalEdit';
 import useGetDevicesByRoom from '../../hooks/useGetDeviceByRoom';
 import GeneralInfo from './GeneralInfo';
+import useGetStatistic from '../../hooks/useGetStatistic';
 
 const { width, height } = Dimensions.get('window');
 
 const DetailRoom = ({ route, navigation }) => {
   const { roomId, name, floor, numberOfDevices } = route.params;
   const { data: deviceData, isLoading: isDevicesLoading } = useGetDevicesByRoom(roomId);
-
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);

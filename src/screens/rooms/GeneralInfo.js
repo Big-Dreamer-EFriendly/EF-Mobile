@@ -1,26 +1,12 @@
-import React, { useState } from 'react';
-import { ECharts } from 'react-native-echarts-wrapper';
+import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import ChartComponent from './ChartComponent';
+import useGetStatistic from '../../hooks/useGetStatistic';
 
 const { width, height } = Dimensions.get('window');
 
 const GeneralInfo = ({ roomId, name, floor, numberOfDevices }) => {
-  const [chartData, setChartData] = useState({
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        data: [820, 932, 901, 934, 1290, 1330, 1620],
-        type: 'bar',
-      },
-    ],
-  });
-
+ const {data: data} = useGetStatistic(roomId)
   return (
     <View style={styles.container}>
       <View style={styles.general}>
@@ -29,8 +15,8 @@ const GeneralInfo = ({ roomId, name, floor, numberOfDevices }) => {
         <Text>Number of Devices: {numberOfDevices}</Text>
       </View>
       <View style={styles.chartContainer}>
-      <Text style={styles.title}>Statistic</Text>
-        <ECharts option={chartData} backgroundColor="transparent" height={height * 0.3} />
+        <Text style={styles.title}>Statistics</Text>
+        <ChartComponent data={data}/>
       </View>
     </View>
   );
@@ -53,7 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   chartContainer: {
-    flex:1,
+    flex: 1,
     paddingHorizontal: width * 0.05,
     paddingBottom: height * 0.02,
   },
