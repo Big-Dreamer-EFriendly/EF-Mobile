@@ -51,12 +51,12 @@ const InforDetailDevice = ({ navigation }) => {
       initialValues={{
         deviceId: devicesData._id,
         roomId: '',
-        quantity: 1,
+        total: 1,
         timeUsed: 0,
         temperature: 0
       }}
       validationSchema={Yup.object().shape({
-        quantity: Yup.number().required('Quantity is required').min(1, 'Quantity must be at least 1'),
+        total: Yup.number().required('Quantity is required').min(1, 'Quantity must be at least 1'),
       })}
       onSubmit={(values) => {
         console.log("data",values);
@@ -64,7 +64,7 @@ const InforDetailDevice = ({ navigation }) => {
           let device = {
             deviceId: devicesData._id,
             roomId: selectedRoomId,
-            quantity: values.quantity,
+            total: values.total,
             timeUsed: 0,
             temperature: values.temperature
           };
@@ -119,22 +119,22 @@ const InforDetailDevice = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.quantityButton}
                     onPress={() => {
-                      const newQuantity = values.quantity - 1;
+                      const newQuantity = values.total - 1;
                       if (newQuantity >= 1) {
-                        setFieldValue('quantity', newQuantity);
+                        setFieldValue('total', newQuantity);
                       }
                     }}
                   >
                     <Text style={styles.quantityButtonText}>-</Text>
                   </TouchableOpacity>
 
-                  <Text style={styles.quantityValue}>{values.quantity}</Text>
+                  <Text style={styles.quantityValue}>{values.total}</Text>
                   <TouchableOpacity
                     style={styles.quantityButton}
                     onPress={() => {
-                      const newQuantity = values.quantity + 1;
+                      const newQuantity = values.total + 1;
                       if (newQuantity <= 50) {
-                        setFieldValue('quantity', newQuantity);
+                        setFieldValue('total', newQuantity);
                       }
                     }}
                   >
