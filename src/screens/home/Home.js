@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get('window');
 
 const WeeklyChart = () => {
   const { data: dataWeek, isLoading } = useGetStatisticByWeek();
-
+console.log(dataWeek);
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -44,8 +44,8 @@ const WeeklyChart = () => {
           value: Math.round(entry.total),
           label: {
             show: true, 
-            position: 'top', // Vị trí của label (có thể là 'top', 'left', 'right', 'bottom', 'inside', 'insideLeft', 'insideRight', 'insideTop', 'insideBottom', 'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight')
-            formatter: '{c} vnd', // Định dạng của label
+            position: 'top', 
+            formatter: '{c} vnd',
           },
         })),        
         barWidth: '60%',
@@ -86,14 +86,7 @@ const generateMonthlyData = () => {
         data: energyData, 
         barWidth: '60%',
       },
-    ],
-    dataZoom: [
-      {
-        type: 'inside',
-        start: 0,
-        end: 100,
-      },
-    ],
+    ]
   };
 };
 
@@ -144,8 +137,8 @@ const YearlyChart = () => {
           value: Math.round(entry.totalElectricityCost),
           label: {
             show: true, 
-            position: 'top', // Vị trí của label (có thể là 'top', 'left', 'right', 'bottom', 'inside', 'insideLeft', 'insideRight', 'insideTop', 'insideBottom', 'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight')
-            formatter: '{c} vnd', // Định dạng của label
+            position: 'top', 
+            formatter: '{c} vnd', 
           },
         })),            
         barWidth: '60%',
