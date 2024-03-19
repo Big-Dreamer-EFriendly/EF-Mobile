@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { api_endpoints } from '../api/apiUrl';
 
-const useEditDevice = ({ navigation }) => {
+const useEditProfile = ({ navigation }) => {
     const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async ({  data }) => {
@@ -13,7 +13,7 @@ const useEditDevice = ({ navigation }) => {
       
       try {
         console.log("data",data);
-        const res = await axios.put(`${api_endpoints}/devicesInRoom`, data, {
+        const res = await axios.put(`${api_endpoints}/profile`, data, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
@@ -23,8 +23,8 @@ const useEditDevice = ({ navigation }) => {
         console.log(data);
 
         if (res.status === 200) {
-          Alert.alert('Success', 'Device updated successfully')
-          queryClient.invalidateQueries('devices');
+          Alert.alert('Success', 'Profile updated successfully')
+          queryClient.invalidateQueries('Profiles');
 
         } else if (res.status === 401) {
           Alert.alert('Error', data.message);
@@ -38,11 +38,11 @@ const useEditDevice = ({ navigation }) => {
     },
   });
 
-  const handleEditDevice = ( data) => {
+  const handleEditProfile = ( data) => {
     mutation.mutate({  data }); 
   };
 
-  return { handleEditDevice };
+  return { handleEditProfile };
 };
 
-export default useEditDevice;
+export default useEditProfile;

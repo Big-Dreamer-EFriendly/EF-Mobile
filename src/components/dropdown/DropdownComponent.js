@@ -70,8 +70,8 @@ const provincesList = [
 ];
 
 
-const DropdownComponent = ({ onProvinceChange }) => {
-  const [value, setValue] = useState(null);
+const DropdownComponent = ({ onProvinceChange, defautProvince }) => {
+  const [value, setValue] = useState(defautProvince);
   const handleChange = (item) => {
     setValue(item.value);
     onProvinceChange && onProvinceChange(item.value);
