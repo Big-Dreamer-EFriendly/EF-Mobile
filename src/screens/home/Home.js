@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, ActivityIndicator} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, ActivityIndicator, RefreshControl} from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { ECharts } from 'react-native-echarts-wrapper';
 import Swiper from 'react-native-swiper';
@@ -9,10 +9,13 @@ import useGetStatisticByYear from '../../hooks/useGetStatisticByYear';
 import useGetTotalBill from '../../hooks/useGetTotalBill';
 const { width, height } = Dimensions.get('window');
 
-
 const WeeklyChart = () => {
-  const { data: dataWeek, isLoading } = useGetStatisticByWeek();
-console.log(dataWeek);
+  const { data: dataWeek, isLoading, refreshData } = useGetStatisticByWeek();
+
+  const onRefresh = useCallback(() => {
+    refreshData();
+  }, [refreshData]);
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -44,8 +47,7 @@ console.log(dataWeek);
           value: Math.round(entry.total),
           label: {
             show: true, 
-            position: 'top', 
-            formatter: '{c} vnd',
+            position: 'top',
           },
         })),        
         barWidth: '60%',
@@ -54,13 +56,17 @@ console.log(dataWeek);
   };
 
   return (
-    <View style={styles.chartContainer}>
-      <ECharts option={chartOption} backgroundColor="#fff" style={{ height: height * 0.7, width: width * 0.6}}/>
-    </View>
+    <ScrollView
+      contentContainerStyle={styles.chartContainer}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+    >
+      <ECharts option={chartOption} backgroundColor="#fff" style={{ height: height * 0.5, width: width * 0.6}}/>
+    </ScrollView>
   );
 };
+
 const generateMonthlyData = () => {
-  const days = Array.from({ length: 30 }, (_, i) => ` ${i}`);
+  const days = Array.from({ length: 30 }, (_, i) => ` ${i + 1}`);
   
   const energyData = Array.from({ length: 30 }, () => Math.floor(Math.random() * (1000 - 500 + 1)) + 500);
 
@@ -83,13 +89,19 @@ const generateMonthlyData = () => {
     series: [
       {
         type: 'bar',
-        data: energyData, 
+        data: energyData, // Sử dụng dữ liệu giả mạo cho năng lượng tiêu thụ
         barWidth: '60%',
       },
-    ]
+    ],
+    dataZoom: [
+      {
+        type: 'inside',
+        start: 0,
+        end: 100,
+      },
+    ],
   };
 };
-
 
 const MonthlyChart = () => {
   return (
@@ -137,8 +149,8 @@ const YearlyChart = () => {
           value: Math.round(entry.totalElectricityCost),
           label: {
             show: true, 
-            position: 'top', 
-            formatter: '{c} vnd', 
+            position: 'top', // Vị trí của label (có thể là 'top', 'left', 'right', 'bottom', 'inside', 'insideLeft', 'insideRight', 'insideTop', 'insideBottom', 'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight')
+            formatter: '{c} vnd', // Định dạng của label
           },
         })),            
         barWidth: '60%',
@@ -192,9 +204,8 @@ const renderScene = SceneMap({
 });
 
 const Home = () => {
-  const [index, setIndex] = useState(0); // Default to monthly
   const {data: data} = useGetTotalBill()
-  console.log(data);
+  const [index, setIndex] = useState(0); // Default to monthly
   const [routes] = useState([
     { key: 'weekly', title: 'Weekly' },
     { key: 'monthly', title: 'Monthly' },
@@ -233,32 +244,27 @@ const Home = () => {
             <Text style={styles.month}>March</Text>
           </View>
           <View style={styles.rightSide}>
-      <Text style={styles.title}>{Math.round(data?.totalCost)} vnd</Text>
-      <Text style={styles.kwh}>{Math.round(data?.kWh)} kWh</Text>
-    </View>
+            <Text style={styles.title}>{Math.round(data?.totalCost)} vnd</Text>
+            <Text style={styles.kwh}>{Math.round(data?.kWh)} kWh</Text>
+          </View>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.tipsContainer}>
-        <View style={styles.headerTip}>
-          <Text style={styles.title}>Tips</Text>
-          <Text style={styles.all}>All</Text>
-        </View>
-        <TipsSlide />
+      <View style={styles.tipsContainer} >
 
         <Text style={{
           color: '#0F3049',
           fontSize: width * 0.05,
-          fontWeight: '600', position: 'absolute', top: height * 0.2, left: width * 0.05
+          fontWeight: '600',
+          marginLeft: width * 0.05
         }}>Statistics</Text>
         <TabView
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
           renderTabBar={renderTabBar}
-          style={{ marginTop: -350}}
         />
-      </ScrollView>
+      </View>
 
     </View>
   );
@@ -346,7 +352,8 @@ const styles = StyleSheet.create({
   tipsContainer: {
     backgroundColor: '#fff',
     paddingBottom: height * 0.015,
-    height: height * 0.9
+    height: height * 0.65,
+    marginBottom: height * 0.01
   },
   headerTip: {
     flexDirection: 'row',

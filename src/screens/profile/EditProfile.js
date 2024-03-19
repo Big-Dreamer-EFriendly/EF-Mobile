@@ -31,7 +31,7 @@ const EditProfile = ({ navigation }) => {
         name: Yup.string()
             .matches(/^[a-zA-Z0-9\sàáạãảăắằẳẵặâấầẩẫậèéẹẽẻêếềểễệđìíịĩỉóòọõỏôốồổỗộơớờởỡợùúụũủưứừửữựỳỹỷỵÀÁẠÃẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẼẺÊẾỀỂỄỆĐÌÍỊĨỈÓÒỌÕỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚỤŨỦƯỨỪỬỮỰỲỸỶỴ]+$/, 'Name cannot contain special characters')
             .min(5, 'Name must be at least 5 characters!')
-            .max(20, 'Name must have a maximum of 50 characters!')
+            .max(50, 'Name must have a maximum of 50 characters!')
             .required('Required'),
         email: Yup.string()
             .email('Invalid email address')
@@ -65,7 +65,7 @@ const EditProfile = ({ navigation }) => {
                     }, 100);
                 }}
             >
-                {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                     <View style={styles.formContainer}>
                         <View style={styles.textInput}>
                             <Text style={styles.label}>Full Name</Text>
@@ -79,8 +79,6 @@ const EditProfile = ({ navigation }) => {
                                     style={styles.input}
                                     placeholder="Enter Your Name"
                                     placeholderTextColor={'#999999'}
-                                    enterKeyHint={'next'}
-                                    onSubmitEditing={() => inputRef.current?.focus()}
                                     onChangeText={handleChange('name')}
                                     onBlur={handleBlur('name')}
                                     value={values.name}
@@ -100,8 +98,6 @@ const EditProfile = ({ navigation }) => {
                                     style={styles.input}
                                     placeholder="Enter Your Email"
                                     placeholderTextColor={'#999999'}
-                                    enterKeyHint={'next'}
-                                    onSubmitEditing={() => inputRef.current?.focus()}
                                     onChangeText={handleChange('email')}
                                     onBlur={handleBlur('email')}
                                     value={values.email}
@@ -111,44 +107,33 @@ const EditProfile = ({ navigation }) => {
                                 <Text style={styles.errorText}>* {errors.email}</Text>
                             ) : null}
 
-                            <Text style={styles.label}>Password</Text>
+                            <Text style={styles.label}>Province</Text>
+                            <DropdownComponent onProvinceChange={handleProvinceChange} defaultProvince={{ label: 'Đà Nẵng', value: 'Đà Nẵng' }} />
+
+                            <Text style={styles.label}>Family Members</Text>
                             <View style={styles.inputContainer}>
                                 <Image
-                                    source={require('../../assets/password.png')}
+                                    source={require('../../assets/member.png')}
                                     style={styles.icon}
                                 />
-
-                                <Text style={styles.label}>Province</Text>
-                                <DropdownComponent onProvinceChange={handleProvinceChange} defautProvince={{ label: 'Đà Nẵng', values: 'Đà Nẵng' }} />
-
-                                <Text style={styles.label}>Family Members</Text>
-                                <View style={styles.inputContainer}>
-                                    <Image
-                                        source={require('../../assets/member.png')}
-                                        style={styles.icon}
-                                    />
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Enter Number of Family Members"
-                                        placeholderTextColor={'#999999'}
-                                        keyboardType="numeric"
-                                        enterKeyHint={'done'}
-                                        onSubmitEditing={() => inputRef.current?.focus()}
-                                        onChangeText={handleChange('member')}
-                                        onBlur={handleBlur('member')}
-                                        value={values.member.toString()}
-                                    />
-                                </View>
-                                {errors.member && touched.member ? (
-                                    <Text style={styles.errorText}>* {errors.member}</Text>
-                                ) : null}
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Enter Number of Family Members"
+                                    placeholderTextColor={'#999999'}
+                                    keyboardType="numeric"
+                                    onChangeText={handleChange('member')}
+                                    onBlur={handleBlur('member')}
+                                    value={values.member.toString()}
+                                />
                             </View>
-                            <Button onPress={handleSubmit} title="Submit" />
+                            {errors.member && touched.member ? (
+                                <Text style={styles.errorText}>* {errors.member}</Text>
+                            ) : null}
                         </View>
-                   
+                        <Button onPress={handleSubmit} title="Submit" />
+                    </View>
                 )}
-            </View>)
-             </Formik>
+            </Formik>
         </View>
     );
 };
