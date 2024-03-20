@@ -29,11 +29,11 @@ const useEditDeviceAir = ({ navigation }) => {
         } else if (res.status === 401) {
           Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
         } else {
-          Alert.alert('Error', 'An unexpected error occurred while updating the device.');
+          Alert.alert('Error', res.data.message);
         }
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'An error occurred while updating the room. Please try again.');
+        Alert.alert('Error', error);
       }
     },
   });

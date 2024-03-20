@@ -23,6 +23,9 @@ import DetailRoom from '../screens/rooms/DetailRoom';
 import DetailTip from '../screens/tips/DetailTip';
 import Widget from '../screens/widget/Widget';
 import RoomListScreen, { DeviceListScreen, DeviceToggle } from '../screens/widget/DeviceList';
+import EditProfile from '../screens/profile/EditProfile';
+import AboutUs from '../screens/profile/AboutUs';
+import InvitePeople from '../screens/profile/InvitePeople';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -114,6 +117,18 @@ const MainNavigate = () => {
                 <Stack.Screen 
                     name="RoomList"
                     component={RoomListScreen}
+                    options={{headerShown: false}} />
+                  <Stack.Screen 
+                    name="EditProfile"
+                    component={EditProfile}
+                    options={{headerShown: false}} />
+                      <Stack.Screen 
+                    name="AboutUs"
+                    component={AboutUs}
+                    options={{headerShown: false}} />
+                      <Stack.Screen 
+                    name="Invite"
+                    component={InvitePeople}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>

@@ -99,7 +99,7 @@ const BottomTabs = () => {
       />
       <CurvedBottomBar.Screen
         name="Profile"
-        component={RoomListScreen}
+        component={Profile}
         position="RIGHT"
         options={{ headerShown: false }}
       />
