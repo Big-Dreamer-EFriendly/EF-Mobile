@@ -12,6 +12,7 @@ const EditProfile = ({ navigation }) => {
     const { data: dataUser, isLoading: isLoading } = useGetUser();
     const { handleEditProfile } = useEditProfile({ navigation });
     console.log(dataUser);
+
     const inputRef = useRef();
 
     const initialValues = {
@@ -47,7 +48,7 @@ const EditProfile = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.navigate('BottomTabs')}>
                     <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Tips</Text>
+                <Text style={styles.title}>Update profile</Text>
             </View>
             <Formik
                 initialValues={initialValues}
@@ -69,7 +70,6 @@ const EditProfile = ({ navigation }) => {
                     <View style={styles.formContainer}>
                         <View style={styles.textInput}>
                             <Text style={styles.label}>Full Name</Text>
-
                             <View style={styles.inputContainer}>
                                 <Image
                                     source={require('../../assets/user.png')}
@@ -108,8 +108,8 @@ const EditProfile = ({ navigation }) => {
                             ) : null}
 
                             <Text style={styles.label}>Province</Text>
-                            <DropdownComponent onProvinceChange={handleProvinceChange} defaultProvince={{ label: 'Đà Nẵng', value: 'Đà Nẵng' }} />
-
+                            <DropdownComponent onProvinceChange={handleProvinceChange} defautProvince={{ lable: values?.address, value: values?.address }} />
+                            {console.log(values.address)}
                             <Text style={styles.label}>Family Members</Text>
                             <View style={styles.inputContainer}>
                                 <Image
@@ -123,14 +123,20 @@ const EditProfile = ({ navigation }) => {
                                     keyboardType="numeric"
                                     onChangeText={handleChange('member')}
                                     onBlur={handleBlur('member')}
-                                    value={values.member.toString()}
+                                    value={values.member?.toString()}
                                 />
                             </View>
                             {errors.member && touched.member ? (
                                 <Text style={styles.errorText}>* {errors.member}</Text>
                             ) : null}
                         </View>
-                        <Button onPress={handleSubmit} title="Submit" />
+                        <TouchableOpacity onPress={handleSubmit} style={styles.btn}>
+                            <Text style={{
+                                color: 'white',
+                                fontSize: width * 0.045,
+                                fontWeight: 'bold'
+                            }}>Update</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             </Formik>
@@ -155,7 +161,7 @@ const styles = StyleSheet.create({
         fontSize: width * 0.055,
         color: '#0F3049',
         fontWeight: '700',
-        marginLeft: width * 0.4
+        marginLeft: width * 0.25
     },
     iconback: {
         width: width * 0.02,
@@ -171,16 +177,39 @@ const styles = StyleSheet.create({
         marginBottom: height * 0.015,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: width * 0.04,
-        marginBottom: height * 0.015,
-        width: '100%',
+        fontSize: width * 0.035,
+        color: 'black',
+        width: width * 0.64
     },
     error: {
         color: 'red',
         marginBottom: height * 0.01,
     },
+    inputContainer: {
+        height: height * 0.07,
+        width: width * 0.8,
+        paddingVertical: 0,
+        paddingHorizontal: 15,
+        marginBottom: 10,
+        backgroundColor: 'rgba(217, 217, 217, 0.25)',
+        borderRadius: 17,
+        color: 'black',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    icon: {
+        width: 20,
+        height: 20
+    },
+    btn: {
+        backgroundColor: '#FF8A1E',
+        paddingVertical: height * 0.02,
+        borderRadius: 15,
+        alignItems: 'center',
+        paddingHorizontal: width * 0.06,
+        marginTop: height * 0.02,
+        marginHorizontal: width * 0.17
+    }
 });
 
 export default EditProfile;

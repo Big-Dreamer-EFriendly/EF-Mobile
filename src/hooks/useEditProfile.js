@@ -23,9 +23,11 @@ const useEditProfile = ({ navigation }) => {
         console.log(data);
 
         if (res.status === 200) {
-          Alert.alert('Success', 'Profile updated successfully')
+          Alert.alert('Success', 'Update profile successfully', [
+            { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
+          ]);
           queryClient.invalidateQueries('Profiles');
-
+          
         } else if (res.status === 401) {
           Alert.alert('Error', data.message);
         } else {
