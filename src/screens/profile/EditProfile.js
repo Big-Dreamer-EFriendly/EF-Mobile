@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Dimensions, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import useGetUser from '../../hooks/useGetUser';
@@ -8,11 +8,10 @@ import DropdownComponent from '../../components/dropdown/DropdownComponent';
 
 const { width, height } = Dimensions.get('window');
 
-const EditProfile = ({ navigation }) => {
-    const { data: dataUser, isLoading: isLoading } = useGetUser();
+const EditProfile = ({ navigation}) => {
+  
+    const { data: dataUser, isLoading: isLoadingUser } = useGetUser();
     const { handleEditProfile } = useEditProfile({ navigation });
-    console.log(dataUser);
-
     const inputRef = useRef();
 
     const initialValues = {
@@ -21,8 +20,7 @@ const EditProfile = ({ navigation }) => {
         address: dataUser?.user.address,
         member: dataUser?.user.member,
     };
-
-    const [selectedProvince, setSelectedProvince] = useState('');
+    const [selectedProvince, setSelectedProvince] = useState(dataUser?.user.address );
 
     const handleProvinceChange = (province) => {
         setSelectedProvince(province);
@@ -39,9 +37,11 @@ const EditProfile = ({ navigation }) => {
             .required('Required'),
         member: Yup.number()
             .min(1, 'Family members must be at least 1')
+            .max(20, "Family members must have a maximum of 50!")
             .required('Required'),
     });
 
+  
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -51,10 +51,14 @@ const EditProfile = ({ navigation }) => {
                 <Text style={styles.title}>Update profile</Text>
             </View>
             <Formik
-                initialValues={initialValues}
+                initialValues={{
+                    name: dataUser?.user.name,
+                    email: dataUser?.user.email,
+                    address: dataUser?.user.address,
+                    member: dataUser?.user.member,
+                }}
                 validationSchema={Signup_Schema}
                 onSubmit={(values) => {
-                    console.log('Form Data:', values);
                     setTimeout(() => {
                         let account = {
                             name: values.name,
@@ -66,9 +70,11 @@ const EditProfile = ({ navigation }) => {
                     }, 100);
                 }}
             >
+
                 {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                     <View style={styles.formContainer}>
                         <View style={styles.textInput}>
+                        {console.log(values)}   
                             <Text style={styles.label}>Full Name</Text>
                             <View style={styles.inputContainer}>
                                 <Image
@@ -81,7 +87,7 @@ const EditProfile = ({ navigation }) => {
                                     placeholderTextColor={'#999999'}
                                     onChangeText={handleChange('name')}
                                     onBlur={handleBlur('name')}
-                                    value={values.name}
+                                    value={values?.name}
                                 />
                             </View>
                             {errors.name && touched.name ? (
@@ -100,7 +106,7 @@ const EditProfile = ({ navigation }) => {
                                     placeholderTextColor={'#999999'}
                                     onChangeText={handleChange('email')}
                                     onBlur={handleBlur('email')}
-                                    value={values.email}
+                                    value={values?.email}
                                 />
                             </View>
                             {errors.email && touched.email ? (
@@ -123,7 +129,7 @@ const EditProfile = ({ navigation }) => {
                                     keyboardType="numeric"
                                     onChangeText={handleChange('member')}
                                     onBlur={handleBlur('member')}
-                                    value={values.member?.toString()}
+                                    value={values?.member?.toString()}
                                 />
                             </View>
                             {errors.member && touched.member ? (
@@ -209,6 +215,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: width * 0.06,
         marginTop: height * 0.02,
         marginHorizontal: width * 0.17
+    },
+    errorText: {
+        color:'red'
     }
 });
 

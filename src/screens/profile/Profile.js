@@ -3,11 +3,13 @@ import { StyleSheet, Text, View, Image, Dimensions, Modal, TouchableOpacity } fr
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Tab from './Tab';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useGetUser from '../../hooks/useGetUser';
 
 const { width, height } = Dimensions.get('window');
 
 const Profile = ({ navigation }) => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const { data: userData, isLoading: isUserLoading } = useGetUser();
 
   const handleLogout = async () => {
     // Clear AsyncStorage data
@@ -20,6 +22,13 @@ const Profile = ({ navigation }) => {
     }
   };
 
+  const handleEditProfile = () => {
+    if (!isUserLoading && userData) {
+      navigation.navigate('EditProfile', { userData: userData });
+    }
+  };
+
+
   return (
     <View style={styles.profileContainer}>
       <View style={styles.profileHeader}>
@@ -30,7 +39,7 @@ const Profile = ({ navigation }) => {
         <Tab iconName='account-edit' text='Edit profile' onPress={() => navigation.navigate('EditProfile')} />
         <Tab iconName='account-group' text='Invite people' onPress={() => navigation.navigate('InvitePeople')} />
         <Tab iconName='alert-circle' text='About us' onPress={() => navigation.navigate('AboutUs')} />
-        <Tab iconName='logout' text='Log out' onPress={() => setLogoutModalVisible(true)} />
+        <Tab iconName='logout' text='Log out' onPress={handleEditProfile} />
       </View>
 
       <Modal
