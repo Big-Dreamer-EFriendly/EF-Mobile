@@ -4,17 +4,17 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api_endpoints } from '../api/apiUrl';
 
-export default function useGetStatisticByYear() {
+export default function useGetStatisticByMonth() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['statisticByYear', refreshKey],
+    queryKey: ['statisticByMonth', refreshKey],
     queryFn: async () => {
       const userTokenObject = await AsyncStorage.getItem('user');
       const userToken = JSON.parse(userTokenObject)?.token || '';
       console.log(userToken);
       try {
-        const response = await axios.get(`${api_endpoints}/statistics/lastYear`, {
+        const response = await axios.get(`${api_endpoints}/statistics/lastMonth`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
