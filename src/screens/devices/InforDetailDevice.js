@@ -32,7 +32,7 @@ const InforDetailDevice = ({ navigation }) => {
       const devicesData = JSON.parse(devicesDataString);
       setDevicesData(devicesData);
       setIsLoading(false);
-    
+
     } catch (error) {
       console.error('Error retrieving devices data from AsyncStorage:', error);
     }
@@ -51,20 +51,20 @@ const InforDetailDevice = ({ navigation }) => {
       initialValues={{
         deviceId: devicesData._id,
         roomId: '',
-        quantity: 1,
+        total: 1,
         timeUsed: 0,
         temperature: 0
       }}
       validationSchema={Yup.object().shape({
-        quantity: Yup.number().required('Quantity is required').min(1, 'Quantity must be at least 1'),
+        total: Yup.number().required('Quantity is required').min(1, 'Quantity must be at least 1'),
       })}
       onSubmit={(values) => {
-        console.log(values);
+        console.log("data",values);
         setTimeout(() => {
           let device = {
             deviceId: devicesData._id,
             roomId: selectedRoomId,
-            quantity: values.quantity,
+            total: values.total,
             timeUsed: 0,
             temperature: values.temperature
           };
@@ -72,96 +72,107 @@ const InforDetailDevice = ({ navigation }) => {
         }, 100);
       }}
     >
-      {({ handleChange, handleBlur, handleSubmit, values, errors, touched,setFieldValue}) => (
+      {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
         <View style={styles.container}>
           {isLoading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large" color="#0000ff" />
           ) : (
-          <View>
-          <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.navigate('Add device')}>
-                <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
-              </TouchableOpacity>            
-            <Text style={styles.title}>Add new device</Text>
-            <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
-          </View>
-          <ScrollView>
-          <View style={styles.cardDevice}>
-            <Image source={require("../../assets/DeviceExample.png")} style={styles.deviceImage} />
-            <Text style={styles.deviceName}>{devicesData.name}</Text>
-            <Text style={styles.devicePower}>Power:{devicesData.powerConsumption} kW</Text>
-          </View>
-          <View style={styles.chooseRoom}>
-            <Text style={styles.subtitle}>Choose room:</Text>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={rooms && rooms.data}
-              keyExtractor={(item) => item._id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.roomItem,
-                    selectedRoomId === item._id && styles.selectedRoom,
-                  ]}
-                  onPress={() => handleRoomPress(item._id)}
-                >
-                <Text style={[styles.roomText, selectedRoomId === item._id && { color: 'white' }]}>
-                  {item.name}
-                </Text>                
-            </TouchableOpacity>
-              )}
-            />
-          </View>
-
-          <View style={styles.quantityContainer}>
-            <Text style={styles.quantityLabel}>Quantity:</Text>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => setFieldValue('quantity', values.quantity - 1)}
-            >
-              <Text style={styles.quantityButtonText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.quantityValue}>{values.quantity}</Text>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => setFieldValue('quantity', values.quantity + 1)}
-            >
-              <Text style={styles.quantityButtonText}>+</Text>
-            </TouchableOpacity>
-          </View>
-          {devicesData.name.toLowerCase().includes('air conditioner') && (
             <View>
-            <Text style={styles.subtitle}>The temperature you usually use:</Text>
-            <View style={styles.temperatureContainer}>
-              <RadialSlider
-                value={values.temperature}
-                variant={'radial-circle-slider'}
-                min={15}
-                max={35}
-                onChange={(temperature) => setFieldValue('temperature', temperature)}
-                subTitle='C'
-                unit='O'
-                style={styles.temperatureCircle}
-                sliderWidth={13}
-                thumbColor='#FF8A1E'
-                markerCircleSize={12}
-                thumbBorderWidth={2}
-                thumbRadius={15}
-                lineSpace={4}
-                subTitleStyle={styles.textC}
-                valueStyle={styles.temperatureStyle}
-                linearGradient={[ { offset: '0%', color:'#FEF5EE' }, { offset: '100%', color: '#FF8A1E' }]}
-              />
-            </View>
-            </View>
-          )}
+              <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.navigate('Add device')}>
+                  <Image source={require("../../assets/iconback.png")} style={styles.iconback} />
+                </TouchableOpacity>
+                <Text style={styles.title}>Add new device</Text>
+                <Image source={require('../../assets/iconmenu.png')} style={styles.icon} />
+              </View>
+              <ScrollView>
+                <View style={styles.cardDevice}>
+                  <Image source={{uri: devicesData.imageUrl}} style={styles.deviceImage} />
+                  <Text style={styles.deviceName}>{devicesData.name}</Text>
+                  <Text style={styles.devicePower}>Power:{devicesData.capacity} kW</Text>
+                </View>
+                <View style={styles.chooseRoom}>
+                  <Text style={styles.subtitle}>Select a room:</Text>
+                  <FlatList
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    data={rooms && rooms.data}
+                    keyExtractor={(item) => item._id.toString()}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={[
+                          styles.roomItem,
+                          selectedRoomId === item._id && styles.selectedRoom,
+                        ]}
+                        onPress={() => handleRoomPress(item._id)}
+                      >
+                        <Text style={[styles.roomText, selectedRoomId === item._id && { color: 'white' }]}>
+                          {item.name}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-          </ScrollView>
-        </View>
+                <View style={styles.quantityContainer}>
+                  <Text style={styles.quantityLabel}>Quantity:</Text>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => {
+                      const newQuantity = values.total - 1;
+                      if (newQuantity >= 1) {
+                        setFieldValue('total', newQuantity);
+                      }
+                    }}
+                  >
+                    <Text style={styles.quantityButtonText}>-</Text>
+                  </TouchableOpacity>
+
+                  <Text style={styles.quantityValue}>{values.total}</Text>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => {
+                      const newQuantity = values.total + 1;
+                      if (newQuantity <= 50) {
+                        setFieldValue('total', newQuantity);
+                      }
+                    }}
+                  >
+                    <Text style={styles.quantityButtonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+                {devicesData.name.toLowerCase().includes('air conditioner') && (
+                  <View>
+                    <Text style={styles.subtitle}>The temperature you usually use:</Text>
+                    <View style={styles.temperatureContainer}>
+                      <RadialSlider
+                        value={values.temperature}
+                        variant={'radial-circle-slider'}
+                        min={15}
+                        max={35}
+                        onChange={(temperature) => setFieldValue('temperature', temperature)}
+                        subTitle='C'
+                        unit='O'
+                        style={styles.temperatureCircle}
+                        sliderWidth={13}
+                        thumbColor='#FF8A1E'
+                        markerCircleSize={12}
+                        thumbBorderWidth={2}
+                        thumbRadius={15}
+                        lineSpace={4}
+                        subTitleStyle={styles.textC}
+                        valueStyle={styles.temperatureStyle}
+                        linearGradient={[{ offset: '0%', color: '#FEF5EE' }, { offset: '100%', color: '#FF8A1E' }]}
+                      />
+                    </View>
+                  </View>
+                )}
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
           )}
         </View>
       )}
@@ -200,7 +211,7 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.02,
   },
   subtitle: {
-    color:'black',
+    color: 'black',
     padding: height * 0.01,
     borderRadius: width * 0.01,
     fontWeight: '700'
@@ -227,7 +238,7 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.02,
   },
   quantityLabel: {
-    color:'black',
+    color: 'black',
     padding: height * 0.01,
     borderRadius: width * 0.01,
     fontWeight: '700',
@@ -240,8 +251,8 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.04,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2, 
-    borderColor: '#FF8A1E',  
+    borderWidth: 2,
+    borderColor: '#FF8A1E',
   },
   quantityButtonText: {
     fontSize: width * 0.045,
@@ -271,9 +282,9 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.03,
     padding: width * 0.03,
     marginBottom: height * 0.02,
-    borderColor: '#FF8A1E',  
-    elevation: 3, 
-    borderWidth: 1, 
+    borderColor: '#FF8A1E',
+    elevation: 3,
+    borderWidth: 1,
   },
   deviceName: {
     fontSize: width * 0.045,
@@ -285,20 +296,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
-  deviceImage:{
+  deviceImage: {
     marginLeft: width * 0.2,
     height: height * 0.08
   },
-  textC:{
+  textC: {
     fontSize: width * 0.07,
     color: '#0F3049',
     fontWeight: '600',
   },
-  temperatureStyle:{
+  temperatureStyle: {
     color: '#0F3049'
   },
-  temperatureContainer:{
-    alignItems:'center',
+  temperatureContainer: {
+    alignItems: 'center',
     marginTop: height * 0.015,
   },
 

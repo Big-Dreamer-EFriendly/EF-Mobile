@@ -21,27 +21,28 @@ const useEditRoom = ({ navigation }) => {
         });
 
         console.log(data);
-
+        console.log(id);
         if (res.status === 200) {
           Alert.alert('Success', 'Room updated successfully', [
             { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
           ]);
           queryClient.invalidateQueries('rooms');
-
+          
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Unauthorized access. Please check your credentials.');
+          Alert.alert('Error', res.data.message);
         } else {
-          Alert.alert('Error', 'An unexpected error occurred while updating the room.');
+          console.log(res.status);
+          Alert.alert('Error', res.data.message);
         }
       } catch (error) {
         console.error(error);
-        Alert.alert('Error', 'An error occurred while updating the room. Please try again.');
+        Alert.alert('Error', error);
       }
     },
   });
 
   const handleEditRoom = (id, data) => {
-    mutation.mutate({ id, data }); // Pass an object with id and data properties
+    mutation.mutate({ id, data }); 
   };
 
   return { handleEditRoom };

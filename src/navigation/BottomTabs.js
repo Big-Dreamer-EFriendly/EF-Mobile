@@ -7,7 +7,8 @@ import Home from '../screens/home/Home';
 import Profile from '../screens/profile/Profile';
 import ShowRoom from '../screens/rooms/ShowRoom';
 import AllTips from '../screens/tips/AllTips';
-
+import Widget from '../screens/widget/Widget';
+import RoomListScreen from '../screens/widget/DeviceList';
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
 

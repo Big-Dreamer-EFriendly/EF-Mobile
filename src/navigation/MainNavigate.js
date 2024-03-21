@@ -20,6 +20,12 @@ import BottomTabs from './BottomTabs';
 import InforDetailDevice from '../screens/devices/InforDetailDevice';
 import EditRoom from '../screens/rooms/EditRoom';
 import DetailRoom from '../screens/rooms/DetailRoom';
+import DetailTip from '../screens/tips/DetailTip';
+import Widget from '../screens/widget/Widget';
+import RoomListScreen, { DeviceListScreen, DeviceToggle } from '../screens/widget/DeviceList';
+import EditProfile from '../screens/profile/EditProfile';
+import AboutUs from '../screens/profile/AboutUs';
+import InvitePeople from '../screens/profile/InvitePeople';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -91,6 +97,38 @@ const MainNavigate = () => {
                      <Stack.Screen 
                     name="DetailRoom"
                     component={DetailRoom}
+                    options={{headerShown: false}} />
+                     <Stack.Screen 
+                    name="DetailTip"
+                    component={DetailTip}
+                    options={{headerShown: false}} />
+                  <Stack.Screen 
+                    name="Widget"
+                    component={Widget}
+                    options={{headerShown: false}} />
+                <Stack.Screen 
+                    name="DeviceToggle"
+                    component={DeviceToggle}
+                    options={{headerShown: false}} />
+                <Stack.Screen 
+                    name="DeviceList"
+                    component={DeviceListScreen}
+                    options={{headerShown: false}} />
+                <Stack.Screen 
+                    name="RoomList"
+                    component={RoomListScreen}
+                    options={{headerShown: false}} />
+                  <Stack.Screen 
+                    name="EditProfile"
+                    component={EditProfile}
+                    options={{headerShown: false}} />
+                      <Stack.Screen 
+                    name="AboutUs"
+                    component={AboutUs}
+                    options={{headerShown: false}} />
+                      <Stack.Screen 
+                    name="Invite"
+                    component={InvitePeople}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>

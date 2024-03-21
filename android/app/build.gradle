@@ -3,7 +3,7 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 project.ext.vectoricons = [
-    iconFontNames: [ 'MaterialCommunityIcons.ttf', 'EvilIcons.ttf', 'FontAwesome.ttf' ] 
+    iconFontNames: [ 'MaterialCommunityIcons.ttf', 'EvilIcons.ttf', 'FontAwesome.ttf',  'FontAwesome5.ttf', 'MaterialIcons.ttf' ] 
 ]
 
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
@@ -113,6 +113,9 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 

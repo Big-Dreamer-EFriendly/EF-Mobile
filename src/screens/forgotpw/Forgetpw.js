@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { KeyboardAvoidingView, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Platform, Dimensions} from "react-native";
+import { KeyboardAvoidingView, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Platform, Dimensions, ActivityIndicator} from "react-native";
 import { Formik } from "formik";
 import useForgotPassword from "../../hooks/useForgotPassword";
 import * as Yup from "yup"; 
+import LoadingModal from "../../components/modal/LoadingModal";
 
 const ForgotPassword_Schema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -27,7 +28,7 @@ const Forgetpw = ({ navigation }) => {
         }, 100);
       }}
     >
-      {({ handleChange, handleSubmit, values }) => (
+      {({ handleChange, handleSubmit, values,errors,touched }) => (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
           <Image source={require("../../assets/lock.png")} style={styles.lock} />
           <Text style={styles.name}>Forget password</Text>
@@ -41,13 +42,17 @@ const Forgetpw = ({ navigation }) => {
               onChangeText={handleChange("email")}
               value={values.email}
             />
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={handleSubmit}
-            disabled={isLoading}
-          >
-            <Text style={styles.nextButtonText}>Reset Password</Text>
-          </TouchableOpacity>
+             {errors.email && touched.email ? (
+                  <Text style={styles.errorText}>* {errors.email}</Text>
+                ) : null}
+              <TouchableOpacity
+                style={styles.nextButton}
+                onPress={handleSubmit}
+                disabled={isLoading}
+              >
+                <Text style={styles.nextButtonText}>Reset Password</Text>
+              </TouchableOpacity>
+              <LoadingModal visible={isLoading} /> 
         </KeyboardAvoidingView>
       )}
     </Formik>
@@ -123,5 +128,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  errorText: {
+    color: 'red',
+    marginRight: width * 0.48
+
+  }
 });
 export default Forgetpw;

@@ -12,20 +12,25 @@ const useLogin = ({navigation}) => {
         const res = await axios.post(`${api_endpoints}/auth/login`, data, { validateStatus: status => true });
         // console.log(res);
         if (res.status === 200) {
+          console.log(res.data);
           const token = res.data.data;
           const user = JSON.stringify({ token });
+          const username = JSON.stringify(res.data.username)
+          await AsyncStorage.setItem('username', username);
+
           await AsyncStorage.setItem('user', user);
           Alert.alert('Success', 'Login successfully', [
             { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
           ]);
         } else if (res.status === 401) {
-          Alert.alert('Error', 'Invalid email or password. Please try again.');
+          console.log(res.data.message);
+          Alert.alert('Error', res.data.message);
         } else {
-          Alert.alert('Error', 'An unexpected error occurred');
+          Alert.alert('Error', res.data.message);
         }
       } catch (error) {
         console.log(error);
-        Alert.alert('Error', 'An error occurred while logging in. Please try again.');
+        Alert.alert('Error', res.data.message);
       }
     },
   });

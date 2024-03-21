@@ -13,6 +13,7 @@ import {
   Dimensions
 } from 'react-native';
 import { Formik } from 'formik';
+import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Login_Schema } from './Validation';
 import useLogin from '../../hooks/useLogin';
 
@@ -72,9 +73,10 @@ const Login = ({ navigation }) => {
                     value={values.password}
                     secureTextEntry={!showPassword}
                   />
-                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIconContainer}>
-                    <Image source={require("../../assets/Show.png")} style={styles.eyeIcon} />
-                  </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIconContainer}>
+                    <Icon
+                      name={showPassword ? 'eye' : 'eye-off'} size={20} color={'#999999'}/>                    
+                      </TouchableOpacity>
                   
                 </View>
                 {errors.password && touched.password ? (
