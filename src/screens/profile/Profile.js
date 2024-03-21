@@ -12,10 +12,8 @@ const Profile = ({ navigation }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUser();
 
   const handleLogout = async () => {
-    // Clear AsyncStorage data
     try {
       await AsyncStorage.clear();
-      // Navigate to login screen
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error clearing AsyncStorage:', error);
@@ -39,7 +37,7 @@ const Profile = ({ navigation }) => {
         <Tab iconName='account-edit' text='Edit profile' onPress={() => navigation.navigate('EditProfile')} />
         <Tab iconName='account-group' text='Invite people' onPress={() => navigation.navigate('InvitePeople')} />
         <Tab iconName='alert-circle' text='About us' onPress={() => navigation.navigate('AboutUs')} />
-        <Tab iconName='logout' text='Log out' onPress={handleEditProfile} />
+        <Tab iconName='logout' text='Log out' onPress={handleLogout} />
       </View>
 
       <Modal

@@ -37,7 +37,7 @@ const EditProfile = ({ navigation}) => {
             .required('Required'),
         member: Yup.number()
             .min(1, 'Family members must be at least 1')
-            .max(20, "Family members must have a maximum of 50!")
+            .max(20, "Family members must have a maximum of 20!")
             .required('Required'),
     });
 

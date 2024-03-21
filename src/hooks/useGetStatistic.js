@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api_endpoints } from '../api/apiUrl';
 
 export default function useGetStatistic(id) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['statistic'],
     queryFn: async () => {
       const userTokenObject = await AsyncStorage.getItem('user');
@@ -20,7 +20,7 @@ export default function useGetStatistic(id) {
         
         return response.data;
       } catch (error) {
-        console.error('Error fetching tips:', error);
+        console.error('Error fetching statistic data:', error);
         throw error;
       }
     },
@@ -29,5 +29,6 @@ export default function useGetStatistic(id) {
   return {
     data,
     isLoading,
+    refetch, // Trả về hàm refetch để cập nhật lại dữ liệu từ API
   };
 }

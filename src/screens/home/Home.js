@@ -227,37 +227,6 @@ console.log(dataYear);
   );
 };
 
-// const TipsSlide = () => {
-//   return (
-//     <>
-//       <Swiper
-//         style={styles.wrapper}
-//         autoplay={true}
-//         autoplayTimeout={3}
-//         showsPagination={true}
-//         dotColor='black'
-//         activeDot={<View style={styles.swiperDot} />}
-//         dot={<View style={styles.swiperDotInactive} />}
-//         paginationStyle={{ marginBottom: height * 0.265 }}
-//       >
-//         <View style={styles.slideContent}>
-//           <Text style={styles.text}>Your air conditioner is {'\n'}consuming a lot of electricity</Text>
-//           <Image source={warningImage} style={styles.warningIcon} />
-//         </View>
-//         <View style={styles.slideContent}>
-//           <Text style={styles.text}>Your air conditioner is {'\n'}consuming a lot of electricity</Text>
-//           <Image source={warningImage} style={styles.warningIcon} />
-//         </View>
-//         <View style={styles.slideContent}>
-//           <Text style={styles.text}>Your air conditioner is {'\n'}consuming a lot of electricity</Text>
-//           <Image source={warningImage} style={styles.warningIcon} />
-//         </View>
-
-//       </Swiper>
-
-//     </>
-//   );
-// };
 
 const renderScene = SceneMap({
   weekly: WeeklyChart,
@@ -265,14 +234,27 @@ const renderScene = SceneMap({
   yearly: YearlyChart,
 });
 
-const Home = () => {
-  const {data: data} = useGetTotalBill()
-  const [index, setIndex] = useState(0); // Default to monthly
+const Home = ({navigation}) => {
+  const [data, setData] = useState(null);
+  const [index, setIndex] = useState(0); 
   const [routes] = useState([
     { key: 'weekly', title: 'Weekly' },
     { key: 'monthly', title: 'Monthly' },
     { key: 'yearly', title: 'Yearly' },
   ]);
+  const { data: totalBillData, isFetching, refetch } = useGetTotalBill();
+
+  // useEffect(() => {
+  //   setData(totalBillData);
+  // }, [totalBillData]);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     refetch();
+  //   },100000); 
+
+  //   return () => clearInterval(interval);
+  // }, [refetch]);
 
   const renderTabBar = props => (
     <TabBar
@@ -282,7 +264,7 @@ const Home = () => {
       renderLabel={({ route, focused, color }) => (
         <TouchableOpacity onPress={() => {
           console.log('Tab pressed:', route.key);
-          props.jumpTo(route.key);
+          navigation.navigate(route.key); 
         }}>
           <Text style={{ color: focused ? '#42CFB4' : 'black', margin: 8 }}>{route.title}</Text>
         </TouchableOpacity>
@@ -306,8 +288,8 @@ const Home = () => {
             <Text style={styles.month}>March</Text>
           </View>
           <View style={styles.rightSide}>
-            <Text style={styles.title}>{Math.round(data?.totalCost)} vnd</Text>
-            <Text style={styles.kwh}>{Math.round(data?.kWh)} kWh</Text>
+            <Text style={styles.title}>{Math.round(totalBillData?.totalCost)} vnd</Text>
+            <Text style={styles.kwh}>{Math.round(totalBillData?.kWh)} kWh</Text>
           </View>
         </View>
       </View>
@@ -322,6 +304,7 @@ const Home = () => {
           marginLeft: width * 0.05
         }}>Statistics</Text>
         <TabView
+        lazy={true}
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
