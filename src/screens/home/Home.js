@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, ActivityIndicator, RefreshControl} from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { ECharts } from 'react-native-echarts-wrapper';
@@ -6,11 +6,91 @@ import Swiper from 'react-native-swiper';
 import warningImage from '../../assets/warning.png';
 import useGetStatisticByWeek from '../../hooks/useGetStatisticByWeek';
 import useGetStatisticByYear from '../../hooks/useGetStatisticByYear';
+import useGetStatisticByMonth from '../../hooks/useGetStatisticsByMonth';
 import useGetTotalBill from '../../hooks/useGetTotalBill';
 const { width, height } = Dimensions.get('window');
 
 const WeeklyChart = () => {
   const { data: dataWeek, isLoading, refreshData } = useGetStatisticByWeek();
+
+  const onRefresh = useCallback(() => {
+    refreshData();
+  }, [refreshData]);
+
+  const chartData = dataWeek?.map(entry => ({
+    date: entry.date.split('-')[2], 
+    total: Math.round(entry.total),
+  }));  
+  const chartDataSorted = chartData?.sort((a, b) => {
+    const dateA = parseInt(a.date);
+    const dateB = parseInt(b.date);
+      return dateA - dateB;
+  });
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  const chartOption = {
+    xAxis: {
+      type: 'category',
+      data: chartDataSorted.map(entry => entry.date),
+      axisLabel: {
+        interval: 0,
+        rotate: 0,
+        textStyle: {
+          fontSize: 9,
+        },
+      },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'vnd',
+      axisLabel:{
+        textStyle: {
+          fontSize: 9
+        }
+      }
+    },
+    series: [
+      {
+        type: 'bar',
+        data: chartDataSorted.map(entry => ({
+          value: entry.total,
+          label: {
+            show: true,
+            position: 'top',
+            textStyle: {
+              fontSize: 9
+            },
+          },
+          
+          
+        })),        
+        barWidth: '60%',
+        itemStyle:{
+          color: '#0F3049'
+        }
+      },
+    ],
+  };
+
+  return (
+    <ScrollView
+      contentContainerStyle={styles.chartContainer}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+    >
+      <ECharts option={chartOption} backgroundColor="#fff" style={{ height: height * 0.5, width: width * 0.6}} />
+    </ScrollView>
+  );
+};
+
+const MonthlyChart = () => {
+  const { data: dataMonth, isLoading, refreshData } = useGetStatisticByMonth();
 
   const onRefresh = useCallback(() => {
     refreshData();
@@ -24,36 +104,132 @@ const WeeklyChart = () => {
     );
   }
 
+  const chartData = dataMonth?.map(entry => ({
+    date: entry.date?.split('-')[2],
+    total: Math.round(entry.total),
+  }));
+
+  const chartDataSorted = chartData.sort((a, b) => parseInt(a.date) - parseInt(b.date));
+
   const chartOption = {
     xAxis: {
       type: 'category',
-      data: dataWeek?.map(entry => entry.date) || [],
+      data: chartDataSorted.map(entry => entry.date),
       axisLabel: {
         interval: 0,
-        rotate: 45,
+        rotate: 0,
         textStyle: {
-          fontSize: 11,
+          fontSize: 9,
         },
       },
     },
     yAxis: {
       type: 'value',
       name: 'vnd',
+      axisLabel:{
+        textStyle: {
+          fontSize: 9
+        }
+      }
+    
     },
     series: [
       {
         type: 'bar',
-        data: dataWeek?.map(entry => ({
-          value: Math.round(entry.total),
+        data: chartDataSorted.map(entry => ({
+          value: entry.total,
           label: {
-            show: true, 
+            show: true,
             position: 'top',
+            textStyle:{
+              fontSize: 9
+            }
           },
-        })),        
+        })),
         barWidth: '60%',
+        itemStyle:{
+          color: '#0F3049'
+        }
       },
     ],
   };
+
+  return (
+    <ScrollView
+      contentContainerStyle={styles.chartContainer}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+    >
+      <ECharts option={chartOption} backgroundColor="#fff" style={{ height: height * 0.5, width: width * 0.6, }} />
+    </ScrollView>
+  );
+};
+
+const YearlyChart = () => {
+  const { data: dataYear, isLoading, refreshData } = useGetStatisticByYear();
+console.log(dataYear);
+  const onRefresh = useCallback(() => {
+    refreshData();
+  }, [refreshData]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+console.log(dataYear);
+const sortedData = dataYear.sort((a, b) => a.month - b.month);
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const chartOption = {
+  xAxis: {
+    type: 'category',
+    data: sortedData.map(entry => entry.month),
+    axisLabel: {
+      interval: 0,
+      rotate: 0,
+      textStyle: {
+        fontSize: 11,
+      },
+    },
+  },
+  yAxis: {
+    type: 'value',
+    name: 'vnd',
+    axisLabel: {
+
+  textStyle:{
+    fontSize: 9
+  }    }
+  },
+  series: [
+    {
+      type: 'bar',
+      data: sortedData.map(entry => ({
+        value: Math.round(entry.totalElectricityCost),
+        label: {
+          show: true,
+          position: 'top',
+          textStyle: {
+            fontSize: 9
+          },
+          
+        }
+     
+      })),
+      barWidth: '60%',
+      itemStyle:{
+        color: '#0F3049'
+      }
+    },
+
+  ],
+
+};
 
   return (
     <ScrollView
@@ -65,137 +241,6 @@ const WeeklyChart = () => {
   );
 };
 
-const generateMonthlyData = () => {
-  const days = Array.from({ length: 30 }, (_, i) => ` ${i + 1}`);
-  
-  const energyData = Array.from({ length: 30 }, () => Math.floor(Math.random() * (1000 - 500 + 1)) + 500);
-
-  return {
-    xAxis: {
-      type: 'category',
-      data: days, 
-      axisLabel: {
-        interval: 0,
-        rotate: 45,
-        textStyle: {
-          fontSize: 9,
-        },
-      }
-    },
-    yAxis: {
-      type: 'value',
-      name: 'kWh',
-    },
-    series: [
-      {
-        type: 'bar',
-        data: energyData, // Sử dụng dữ liệu giả mạo cho năng lượng tiêu thụ
-        barWidth: '60%',
-      },
-    ],
-    dataZoom: [
-      {
-        type: 'inside',
-        start: 0,
-        end: 100,
-      },
-    ],
-  };
-};
-
-const MonthlyChart = () => {
-  return (
-    <View style={styles.chartContainer}>
-      <ECharts
-        option={generateMonthlyData()}
-        backgroundColor="#fff"
-        style={{ height: height * 0.7 }}
-      />
-    </View>
-  );
-};
-
-const YearlyChart = () => {
-  const { data: dataYear, isLoading } = useGetStatisticByYear();
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  const chartOption = {
-    xAxis: {
-      type: 'category',
-      data: dataYear?.map(entry => entry.month) || [],
-      axisLabel: {
-        interval: 0,
-        rotate: 45,
-        textStyle: {
-          fontSize: 11,
-        },
-      },
-    },
-    yAxis: {
-      type: 'value',
-      name: 'kWh',
-    },
-    series: [
-      {
-        type: 'bar',
-        data: dataYear?.map(entry => ({
-          value: Math.round(entry.totalElectricityCost),
-          label: {
-            show: true, 
-            position: 'top', // Vị trí của label (có thể là 'top', 'left', 'right', 'bottom', 'inside', 'insideLeft', 'insideRight', 'insideTop', 'insideBottom', 'insideTopLeft', 'insideBottomLeft', 'insideTopRight', 'insideBottomRight')
-            formatter: '{c} vnd', // Định dạng của label
-          },
-        })),            
-        barWidth: '60%',
-      },
-    ],
-  };
-
-  return (
-    <View style={styles.chartContainer}>
-      <ECharts option={chartOption} backgroundColor="#fff" style={{ height: height * 0.7, marginHorizontal: width * 0.01 }}/>
-    </View>
-  );
-};
-
-const TipsSlide = () => {
-  return (
-    <>
-      <Swiper
-        style={styles.wrapper}
-        autoplay={true}
-        autoplayTimeout={3}
-        showsPagination={true}
-        dotColor='black'
-        activeDot={<View style={styles.swiperDot} />}
-        dot={<View style={styles.swiperDotInactive} />}
-        paginationStyle={{ marginBottom: height * 0.265 }}
-      >
-        <View style={styles.slideContent}>
-          <Text style={styles.text}>Your air conditioner is {'\n'}consuming a lot of electricity</Text>
-          <Image source={warningImage} style={styles.warningIcon} />
-        </View>
-        <View style={styles.slideContent}>
-          <Text style={styles.text}>Your air conditioner is {'\n'}consuming a lot of electricity</Text>
-          <Image source={warningImage} style={styles.warningIcon} />
-        </View>
-        <View style={styles.slideContent}>
-          <Text style={styles.text}>Your air conditioner is {'\n'}consuming a lot of electricity</Text>
-          <Image source={warningImage} style={styles.warningIcon} />
-        </View>
-
-      </Swiper>
-
-    </>
-  );
-};
 
 const renderScene = SceneMap({
   weekly: WeeklyChart,
@@ -203,14 +248,27 @@ const renderScene = SceneMap({
   yearly: YearlyChart,
 });
 
-const Home = () => {
-  const {data: data} = useGetTotalBill()
-  const [index, setIndex] = useState(0); // Default to monthly
+const Home = ({navigation}) => {
+  const [data, setData] = useState(null);
+  const [index, setIndex] = useState(0); 
   const [routes] = useState([
     { key: 'weekly', title: 'Weekly' },
     { key: 'monthly', title: 'Monthly' },
     { key: 'yearly', title: 'Yearly' },
   ]);
+  const { data: totalBillData, isFetching, refetch } = useGetTotalBill();
+
+  // useEffect(() => {
+  //   setData(totalBillData);
+  // }, [totalBillData]);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     refetch();
+  //   },100000); 
+
+  //   return () => clearInterval(interval);
+  // }, [refetch]);
 
   const renderTabBar = props => (
     <TabBar
@@ -220,7 +278,7 @@ const Home = () => {
       renderLabel={({ route, focused, color }) => (
         <TouchableOpacity onPress={() => {
           console.log('Tab pressed:', route.key);
-          props.jumpTo(route.key);
+          navigation.navigate(route.key); 
         }}>
           <Text style={{ color: focused ? '#42CFB4' : 'black', margin: 8 }}>{route.title}</Text>
         </TouchableOpacity>
@@ -244,12 +302,13 @@ const Home = () => {
             <Text style={styles.month}>March</Text>
           </View>
           <View style={styles.rightSide}>
-            <Text style={styles.title}>{Math.round(data?.totalCost)} vnd</Text>
-            <Text style={styles.kwh}>{Math.round(data?.kWh)} kWh</Text>
+            <Text style={styles.title}>{Math.round(totalBillData?.totalCost)} vnd</Text>
+            <Text style={styles.kwh}>{Math.round(totalBillData?.kWh)} kWh</Text>
           </View>
         </View>
       </View>
 
+    
       <View style={styles.tipsContainer} >
 
         <Text style={{
@@ -259,6 +318,7 @@ const Home = () => {
           marginLeft: width * 0.05
         }}>Statistics</Text>
         <TabView
+        lazy={true}
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}

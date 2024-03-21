@@ -4,7 +4,7 @@ import axios from 'axios';
 import { api_endpoints } from '../api/apiUrl';
 
 export default function useGetTotalBill() {
-  const { data, isFetching } = useQuery({
+  const { data, isFetching,refetch} = useQuery({
     queryKey: ['totalBill'],
     queryFn: async () => {
       const userTokenObject = await AsyncStorage.getItem('user');
@@ -21,6 +21,6 @@ export default function useGetTotalBill() {
   });
 
   return {
-    data, isFetching
+    data, isFetching,refetch
   };
 }
