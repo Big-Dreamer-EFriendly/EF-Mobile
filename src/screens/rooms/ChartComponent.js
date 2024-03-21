@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ECharts } from 'react-native-echarts-wrapper';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 const ChartComponent = ({ data }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -67,8 +67,8 @@ const ChartComponent = ({ data }) => {
   return (
     <View style={styles.container}>
       {isLoading ? (
-        <Text>Loading...</Text>
-      ) : (
+        <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
         <ECharts option={getChartOption()} />
       )}
     </View>

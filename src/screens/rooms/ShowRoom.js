@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useDeleteRoom from '../../hooks/useDeleteRoom';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView, ActivityIndicator,RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, FlatList, SafeAreaView, ActivityIndicator, Modal, RefreshControl } from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import useGetRoom from '../../hooks/useGetRoom';
 
@@ -9,23 +9,33 @@ const { width, height } = Dimensions.get('window');
 
 const ShowRoom = ({ navigation }) => {
   const [toggleState, setToggleState] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState(null);
+  const { handleDeleteRoom, isLoading: isDeleting } = useDeleteRoom();
+  const [refreshing, setRefreshing] = useState(false);
+  const { data, isFetching } = useGetRoom();
+
+  
   const toggleButton = () => {
     setToggleState(!toggleState);
   };
-  const { handleDeleteRoom, isLoading: isDeleting } = useDeleteRoom();
-  const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = useCallback(() => {
-      setRefreshing(true);
-      setTimeout(() => {
-        setRefreshing(false);
-      }, 2000);
-    }, []);
-  const { data, isFetching } = useGetRoom();
+  const handleConfirmDelete = (roomId) => {
+    setSelectedRoomId(roomId);
+    console.log(selectedRoomId);
+    setDeleteModalVisible(true);
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const renderItem = ({ item }) => (
     <View style={styles.button}>
-      <TouchableOpacity onPress={() => navigation.navigate('DetailRoom',{roomId :item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices})}>
+      <TouchableOpacity onPress={() => navigation.navigate('DetailRoom', { roomId: item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices })}>
         <Text style={styles.roomText}>{item.name}</Text>
         <View style={styles.column}>
           <Text style={styles.labelText}>Monthly Electric Consumption</Text>
@@ -39,11 +49,11 @@ const ShowRoom = ({ navigation }) => {
         <Text style={styles.labelText}>Floor: {item.floor}</Text>
         <View style={styles.column2}>
           <Text style={styles.numberDevice}>{item.numberOfDevices} devices</Text>
-          <TouchableOpacity style={[styles.numberDevice, {marginLeft: width * 0.5}]} onPress={() => navigation.navigate('EditRoom', { roomId: item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices })}>
-            <Icon name='square-edit-outline' color={'#FA812E'} size={20}/>
+          <TouchableOpacity style={[styles.numberDevice, { marginLeft: width * 0.5 }]} onPress={() => navigation.navigate('EditRoom', { roomId: item._id, name: item.name, floor: item.floor, numberOfDevices: item.numberOfDevices })}>
+            <Icon name='square-edit-outline' color={'#FA812E'} size={20} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.numberDevice, {marginLeft: width * 0.02}]} onPress={() => handleDeleteRoom(item._id)} disabled={isDeleting}>
-            <Icon name='delete' color={'grey'} size={20}/>
+          <TouchableOpacity style={[styles.numberDevice, { marginLeft: width * 0.02 }]} onPress={() => handleConfirmDelete(item?._id)} disabled={isDeleting}>
+            <Icon name='delete' color={'grey'} size={20} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -76,28 +86,48 @@ const ShowRoom = ({ navigation }) => {
         </View>
       ) : data ? (
         <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          ListHeaderComponent={
+            <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
+              <Icon name={'plus-circle'} color={'white'} size={40} />
+              <Text style={{ color: 'white', fontWeight: '600' }}>Add new room</Text>
+            </TouchableOpacity>
           }
-        ListHeaderComponent={ 
-        <TouchableOpacity style={styles.buttonPlus} onPress={() => navigation.navigate("Add room")}>
-        <Icon name={'plus-circle'}  color={'white'} size={40} />
-        <Text style={{color: 'white', fontWeight: '600'}}>Add new room</Text>
-      </TouchableOpacity>}
           showsVerticalScrollIndicator={false}
           style={styles.flatList}
           data={data.data}
           renderItem={renderItem}
           keyExtractor={(item) => item._id}
-
         />
       ) : (
         <Text style={styles.title}>No data available</Text>
       )}
-     
-    </SafeAreaView >
+
+      <Modal
+        animationType="slide"
+        transparent={
+          true}
+        visible={deleteModalVisible}
+        onRequestClose={() => setDeleteModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Are you sure you want to delete this room?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={() => setDeleteModalVisible(false)} style={styles.modalButton}>
+                <Text style={styles.buttonText}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { setDeleteModalVisible(false); handleDeleteRoom(selectedRoomId); }} style={styles.modalButton}>
+                <Text style={[styles.buttonText, { color: '#FF0000' }]}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -145,12 +175,6 @@ const styles = StyleSheet.create({
     marginLeft: width * 0.01,
     marginRight: width * 0.01
   },
-  roomImage: {
-    width: 50,
-    height: 50,
-    marginRight: width * 0.01,
-    marginBottom: height * 0.1
-  },
   roomText: {
     fontSize: width * 0.05,
     fontWeight: 'bold',
@@ -184,19 +208,16 @@ const styles = StyleSheet.create({
     fontSize: width * 0.03,
     color: 'black',
   },
-
   buttonPlus: {
-    // justifyContent: 'center',
-    alignItems:'center',
+    alignItems: 'center',
     gap: width * 0.01,
-    flexDirection:'row',
-    backgroundColor:'#42CFB6',
+    flexDirection: 'row',
+    backgroundColor: '#42CFB6',
     marginLeft: width * 0.5,
     borderRadius: width * 0.03,
     paddingHorizontal: width * 0.01,
-    paddingVertical: height * 0.005, 
+    paddingVertical: height * 0.005,
     marginTop: height * 0.015
-  
   },
   plus: {
     fontSize: width * 0.06
@@ -215,7 +236,6 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: width * 0.04,
     color: 'black',
-    
   },
   valueText: {
     fontSize: width * 0.04,
@@ -237,10 +257,33 @@ const styles = StyleSheet.create({
   },
   editButton: {
     color: 'black'
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+  },
+  modalButton: {
+    fontSize: 16,
+    marginHorizontal: 10,
+  },
+  buttonText: {
+    color: '#007AFF',
+  },
 });
 
 export default ShowRoom;
-
-
-
