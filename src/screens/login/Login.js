@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState , useEffect} from 'react';
 import {
   View,
   Text,
@@ -16,16 +16,35 @@ import { Formik } from 'formik';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Login_Schema } from './Validation';
 import useLogin from '../../hooks/useLogin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const { width, height } = Dimensions.get('window');
 
+
 const Login = ({ navigation }) => {
+  
   const passwordRef = useRef();
   const { handleLogin } = useLogin({ navigation });
   const [showPassword, setShowPassword] = useState(false);
+  const getFCMToken = async () => {
+    try {
+      const fcmToken = await AsyncStorage.getItem('fcm_token');
+      return fcmToken;
+    } catch (error) {
+      console.log('Error getting FCM token:', error);
+      return null;
+    }
+  };
+  const [fcmToken, setFCMToken] = useState(null);
+
+  useEffect(() => {
+    getFCMToken().then(token => setFCMToken(token));
+  }, []);
+
   return (
     <Formik
-      initialValues={{ email: '', password: '' }}
+      initialValues={{ email: '', password: '', tokenDevice: ''}}
       validationSchema={Login_Schema}
       onSubmit={values => {
         console.log(values);
@@ -33,6 +52,7 @@ const Login = ({ navigation }) => {
           let account = {
             email: values.email,
             password: values.password,
+            tokenDevice: fcmToken 
           };
           handleLogin(account);
         }, 100);

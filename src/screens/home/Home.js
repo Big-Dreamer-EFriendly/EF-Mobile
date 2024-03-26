@@ -166,7 +166,6 @@ const MonthlyChart = () => {
 
 const YearlyChart = () => {
   const { data: dataYear, isLoading, refreshData } = useGetStatisticByYear();
-console.log(dataYear);
   const onRefresh = useCallback(() => {
     refreshData();
   }, [refreshData]);
@@ -179,11 +178,7 @@ console.log(dataYear);
     );
   }
 console.log(dataYear);
-const sortedData = dataYear.sort((a, b) => a.month - b.month);
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
+const sortedData = dataYear?.sort((a, b) => a.month - b.month);
 
 const chartOption = {
   xAxis: {
@@ -252,9 +247,9 @@ const Home = ({navigation}) => {
   const [data, setData] = useState(null);
   const [index, setIndex] = useState(0); 
   const [routes] = useState([
-    { key: 'weekly', title: 'Weekly' },
-    { key: 'monthly', title: 'Monthly' },
-    { key: 'yearly', title: 'Yearly' },
+    { key: 'weekly', title: 'Last week' },
+    { key: 'monthly', title: 'Last month' },
+    { key: 'yearly', title: 'Last year' },
   ]);
   const { data: totalBillData, isFetching, refetch } = useGetTotalBill();
 

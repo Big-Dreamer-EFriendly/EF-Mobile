@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "724131210075",
+    "project_id": "efriendly-fd7d4",
+    "storage_bucket": "efriendly-fd7d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724131210075:android:b78603368f4e71b769307e",
+        "android_client_info": {
+          "package_name": "com.efmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXsOTQuFjIzpuKY53TXmeteompdvWAzrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   iconback: {
-    width: width * 0.02,
-    height: height * 0.02,
+    width: width * 0.03,
+    height: height * 0.03,
   },
   icon: {
     width: width * 0.055,

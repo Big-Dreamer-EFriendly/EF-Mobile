@@ -14,7 +14,7 @@ const Profile = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
-      navigation.navigate('Login');
+      navigation.navigate('Introduction');
     } catch (error) {
       console.error('Error clearing AsyncStorage:', error);
     }

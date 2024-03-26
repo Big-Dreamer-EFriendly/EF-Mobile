@@ -12,15 +12,19 @@ const Introduction = ({ navigation }) => {
 
   const checkUser = async () => {
     try {
-      const userToken = await AsyncStorage.getItem('user');
-      if (userToken) {
+      const userToken = await AsyncStorage.getItem('role');
+      const role = JSON.parse(userToken);
+      console.log(userToken);
+      if (role.roleToken === "user") {
         navigation.navigate('BottomTabs');
+      } else if (role.roleToken === 'admin') {
+        navigation.navigate('TipsAdmin');
       }
     } catch (error) {
       console.error('Error checking user:', error);
     }
   };
- 
+  
   return (
     <View style={styles.container}>
       <Image source={require("../../assets/appname.png")} style={styles.appname} />

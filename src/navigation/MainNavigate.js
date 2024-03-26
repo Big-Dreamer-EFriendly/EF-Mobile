@@ -26,6 +26,7 @@ import RoomListScreen, { DeviceListScreen, DeviceToggle } from '../screens/widge
 import EditProfile from '../screens/profile/EditProfile';
 import AboutUs from '../screens/profile/AboutUs';
 import InvitePeople from '../screens/profile/InvitePeople';
+import TipAdmin from '../screens/tips/TipAdmin';
 const queryClient = new QueryClient();
 
 const MainNavigate = () => {
@@ -129,6 +130,10 @@ const MainNavigate = () => {
                       <Stack.Screen 
                     name="Invite"
                     component={InvitePeople}
+                    options={{headerShown: false}} />
+                    <Stack.Screen 
+                    name="TipsAdmin"
+                    component={TipAdmin}
                     options={{headerShown: false}} />
                 </Stack.Navigator>
             </QueryClientProvider>

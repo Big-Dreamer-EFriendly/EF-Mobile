@@ -14,14 +14,24 @@ const useLogin = ({navigation}) => {
         if (res.status === 200) {
           console.log(res.data);
           const token = res.data.data;
+          const roleToken = res.data.role;
           const user = JSON.stringify({ token });
-          const username = JSON.stringify(res.data.username)
+          const role = JSON.stringify({roleToken});
+          console.log();
+          const username = JSON.stringify(res.data.username);
           await AsyncStorage.setItem('username', username);
-
           await AsyncStorage.setItem('user', user);
-          Alert.alert('Success', 'Login successfully', [
-            { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
-          ]);
+          await AsyncStorage.setItem('role', role);
+
+          if (res.data.role === 'admin') {
+            Alert.alert('Success', 'Login successfully with admin account', [
+              { text: 'OK', onPress: () => navigation.navigate('TipsAdmin') },
+            ]);
+          } else {
+            Alert.alert('Success', 'Login successfully', [
+              { text: 'OK', onPress: () => navigation.navigate('BottomTabs') },
+            ]);
+          }
         } else if (res.status === 401) {
           console.log(res.data.message);
           Alert.alert('Error', res.data.message);
@@ -30,7 +40,7 @@ const useLogin = ({navigation}) => {
         }
       } catch (error) {
         console.log(error);
-        Alert.alert('Error', res.data.message);
+        Alert.alert('Error', 'An error occurred during login');
       }
     },
   });
